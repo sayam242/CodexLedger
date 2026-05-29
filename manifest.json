@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "CodexLedger",
+    "version": "0.1.0",
+    "discription":"Leetcode Tracker extension",
+    "content_scripts":[
+        {
+            "matches": ["https://leetcode.com/*"],
+            "js": ["content.js"]
+        }
+    ]
+}

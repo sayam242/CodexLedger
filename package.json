@@ -4,6 +4,7 @@
     "monaco-editor": "^0.55.1"
   },
   "dependencies": {
+    "@crxjs/vite-plugin": "^2.6.1",
     "firebase": "^12.14.0"
   }
 }

@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id
+  name      String
+  email     String    @unique
+  photoUrl  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  problems  Problem[]
+}
+
+model Problem {
+  id            String          @id @default(uuid())
+  platform      String
+  problemNumber String?
+  title         String
+  slug          String
+  url           String
+  difficulty    String
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content       ProblemContent?
+  topics        ProblemTopic[]
+  submissions   Submission[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([userId, slug])
+  @@index([userId])
+}
+
+model ProblemContent {
+  id        String @id @default(uuid())
+  problemId String @unique
+
+  htmlContent String
+  plainText   String
+  problem     Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Submission {
+  id           String   @id @default(uuid())
+  problemId    String
+  language     String
+  code         String
+  status       String?
+  errorMessage String?
+  submittedAt  DateTime
+  problem      Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([problemId, submittedAt])
+  @@index([problemId])
+}
+
+model Topic {
+  id        String         @id @default(uuid())
+  name      String         @unique
+  problems  ProblemTopic[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model ProblemTopic {
+  problemId String
+  topicId   String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  topic     Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, topicId])
+  @@index([topicId])
+}

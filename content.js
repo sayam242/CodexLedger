@@ -1,6 +1,7 @@
 let lastUrl = location.href;
 
 
+
 function handleSubmissionsPage(){
     const title=document.title;
     const problemName=title.split(" - ")[0];

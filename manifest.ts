@@ -13,12 +13,22 @@ const manifest: ManifestV3Export = {
     service_worker: "src/background.ts"
   },
 
+  action: {
+    default_popup: "src/popup/popup.html"
+  },
+
   content_scripts: [
     {
       matches: ["https://leetcode.com/*"],
       js: ["src/content/index.ts"]
     }
   ],
+
+  externally_connectable: {
+    matches: [
+      "http://localhost:5173/*"
+    ]
+  },
 
     web_accessible_resources: [
     {
@@ -27,7 +37,10 @@ const manifest: ManifestV3Export = {
     }
     ],
 
-  permissions: []
+  permissions: [
+    "storage",
+    "tabs"
+  ]
 };
 
 export default manifest;

@@ -7,7 +7,8 @@ import dotenv from "dotenv";
  * Routes imports....
  */
 import syncRoutes from "./routes/sync.routes";
-
+import authRoutes from "./routes/auth.routes";
+import cookieParser from "cookie-parser";
 
 // Initialize environment variables
 dotenv.config();
@@ -15,17 +16,32 @@ dotenv.config();
 // Initialize Express app
 const app=express();
 
+
+
 // Health check endpoint
 app.get("/health",(req,res)=>{
     res.json({status:"ok"});
 });
 
 
+// Use cookie parser middleware
+app.use(cookieParser());
+
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://leetcode.com"
+    ],
+    credentials: true
+  })
+);
 
 // use Routes
 app.use("/api/sync", syncRoutes);
+app.use("/api/auth", authRoutes);
+
 
 // Start the server
 app.listen(process.env.PORT,()=>{

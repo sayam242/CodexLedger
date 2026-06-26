@@ -1,15 +1,19 @@
+import { useState } from "react";
+
 import {
   Card,
   CardContent
-}
-from "@/components/ui/card";
+} from "@/components/ui/card";
 
 import {
   Badge
-}
-from "@/components/ui/badge";
+} from "@/components/ui/badge";
 
-import type { ProblemCardData } from "@/dashboard/types/dashboard.types";
+import type {
+  ProblemCardData
+} from "@/dashboard/types/dashboard.types";
+
+import SubmissionHistory from "./SubmissionHistory";
 
 interface ProblemCardProps {
 
@@ -18,98 +22,141 @@ interface ProblemCardProps {
 }
 
 export default function ProblemCard(
-{
-  problem
-}: ProblemCardProps
+  {
+    problem
+  }: ProblemCardProps
 ) {
+
+  const [
+    expanded,
+    setExpanded
+  ] = useState(false);
 
   return (
 
-    <Card>
+    <Card
+      className="
+        cursor-pointer
+        overflow-hidden
+      "
+      onClick={() =>
+        setExpanded(
+          !expanded
+        )
+      }
+    >
 
       <CardContent
         className="
-          flex
-          items-center
-          justify-between
           py-6
         "
       >
 
-        {/* Left */}
-
         <div
           className="
-            space-y-2
+            flex
+            items-center
+            justify-between
           "
         >
 
-          <div
-            className="
-              text-sm
-              text-muted-foreground
-            "
-          >
-
-            LeetCode #{problem.problemId}
-
-          </div>
+          {/* Left */}
 
           <div
             className="
-              flex
-              items-center
-              gap-3
+              space-y-2
             "
           >
 
-            <h3
+            <div
               className="
-                font-semibold
+                text-sm
+                text-muted-foreground
               "
             >
 
-              {problem.title}
+              LeetCode #
+              {problem.problemId}
 
-            </h3>
+            </div>
 
-            <Badge>
+            <div
+              className="
+                flex
+                items-center
+                gap-3
+              "
+            >
 
-              {problem.difficulty}
+              <h3
+                className="
+                  font-semibold
+                "
+              >
 
-            </Badge>
+                {problem.title}
+
+              </h3>
+
+              <Badge>
+
+                {problem.difficulty}
+
+              </Badge>
+
+            </div>
 
           </div>
 
-        </div>
-
-        {/* Right */}
-
-        <div
-          className="
-            text-right
-            space-y-2
-          "
-        >
-
-          <Badge>
-
-            {problem.latestStatus}
-
-          </Badge>
+          {/* Right */}
 
           <div
             className="
-              text-sm
-              text-muted-foreground
+              text-right
+              space-y-2
             "
           >
 
-            {problem.latestSubmissionAt}
+            <Badge>
+
+              {problem.latestStatus}
+
+            </Badge>
+
+            <div
+              className="
+                text-sm
+                text-muted-foreground
+              "
+            >
+
+              {problem.latestSubmissionAt}
+
+            </div>
 
           </div>
 
         </div>
+
+        {
+
+          expanded && (
+
+            <SubmissionHistory
+
+              problemId={
+                problem.problemId
+              }
+
+              submissions={
+                problem.submissions
+              }
+
+            />
+
+          )
+
+        }
 
       </CardContent>
 

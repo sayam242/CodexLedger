@@ -1,5 +1,5 @@
-import prisma from "../lib/prisma";
-import {LoginRequestDto} from "../types/dto/loginRequest.types";
+import prisma from "../../lib/prisma";
+import {LoginRequestDto} from "../dto/loginRequest.types";
 import jwt from "jsonwebtoken"
 
 export async function loginUser(

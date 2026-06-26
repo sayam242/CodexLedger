@@ -11,7 +11,49 @@ export const problems = [
     latestStatus: "Accepted",
 
     latestSubmissionAt:
-      "Mar 12, 14:32"
+      "Mar 12, 14:32",
+      submissions: [
+
+            {
+
+                submissionId: "s1",
+
+                status: "Accepted",
+
+                language: "C++",
+
+                submittedAt:
+                    "Today, 10:30 AM"
+
+            },
+
+            {
+
+                submissionId: "s2",
+
+                status: "Wrong Answer",
+
+                language: "C++",
+
+                submittedAt:
+                    "Yesterday, 8:15 PM"
+
+            },
+
+            {
+
+                submissionId: "s3",
+
+                status: "TLE",
+
+                language: "Python",
+
+                submittedAt:
+                    "2 days ago, 5:40 PM"
+
+            }
+
+        ]
 
   },
 
@@ -29,7 +71,50 @@ export const problems = [
       "Wrong Answer",
 
     latestSubmissionAt:
-      "Mar 12, 11:08"
+      "Mar 12, 11:08",
+    
+    submissions: [
+
+            {
+
+                submissionId: "s1",
+
+                status: "Accepted",
+
+                language: "C++",
+
+                submittedAt:
+                    "Today, 10:30 AM"
+
+            },
+
+            {
+
+                submissionId: "s2",
+
+                status: "Wrong Answer",
+
+                language: "C++",
+
+                submittedAt:
+                    "Yesterday, 8:15 PM"
+
+            },
+
+            {
+
+                submissionId: "s3",
+
+                status: "TLE",
+
+                language: "Python",
+
+                submittedAt:
+                    "2 days ago, 5:40 PM"
+
+            }
+
+        ]
 
   }
 

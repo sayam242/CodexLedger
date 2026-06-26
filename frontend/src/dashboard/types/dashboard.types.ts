@@ -42,5 +42,18 @@ export interface ProblemCardData {
 
   latestSubmissionAt: string;
 
+  submissions: SubmissionHistoryItem[];
+
+}
+export interface SubmissionHistoryItem {
+
+    submissionId: string;
+
+    status: SubmissionStatus;
+
+    language: string;
+
+    submittedAt: string;
+
 }
 

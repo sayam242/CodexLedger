@@ -1,5 +1,5 @@
-import prisma from "../lib/prisma";
-import { ActiveProblem } from "../types/dto/sync.types";
+import prisma from "../../lib/prisma";
+import { ActiveProblem } from "../types/sync.types";
 
 export async function saveProblem(
   problem: ActiveProblem,
@@ -8,25 +8,12 @@ export async function saveProblem(
 
   await prisma.$transaction(async(tx)=>{
 
-    await tx.user.upsert({
-      where: {
-          id: userId+'2'
-      },
-  
-      update: {},
-  
-      create: {
-          id: userId+'2',
-          name: "Test User 2",
-          email: "test2@test.com"
-      }
-    });
-  
+      
     const savedProblem = await tx.problem.upsert({
   
       where:{
         userId_slug:{
-          userId: userId+'2',
+          userId: userId,
           slug: problem.meta.slug
         }
       },
@@ -37,7 +24,7 @@ export async function saveProblem(
         problemNumber: problem.meta.problemNumber
       },
       create:{
-        userId: userId+'2',
+        userId: userId,
         platform: problem.meta.platform,
         problemNumber: problem.meta.problemNumber,
         title: problem.meta.problemTitle,

@@ -6,8 +6,9 @@ import dotenv from "dotenv";
 /**
  * Routes imports....
  */
-import syncRoutes from "./routes/sync.routes";
-import authRoutes from "./routes/auth.routes";
+import syncRoutes from "./extension/routes/sync.routes";
+import authRoutes from "./auth/routes/auth.routes";
+import dashboardRoutes from "./dashboard/routes/dashboard.routes";
 import cookieParser from "cookie-parser";
 
 // Initialize environment variables
@@ -32,7 +33,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://leetcode.com"
+      "https://leetcode.com",
+      "chrome-extension://cimlcfmopngdhodadhebdmdjjmmbgddf"
     ],
     credentials: true
   })
@@ -41,7 +43,7 @@ app.use(
 // use Routes
 app.use("/api/sync", syncRoutes);
 app.use("/api/auth", authRoutes);
-
+app.use("/api/dashboard", dashboardRoutes);
 
 // Start the server
 app.listen(process.env.PORT,()=>{

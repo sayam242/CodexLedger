@@ -11,6 +11,7 @@ import LoginPage from "./auth/pages/LoginPage";
 import DashboardPage from "./dashboard/pages/DashboardPage";
 import ConnectExtensionPage from "./auth/pages/ConnectExtenssionPage";
 import APPLayout from "./shared/layout/AppLayout";
+import ProblemsPage from "./problems/pages/ProblemsPage";
 
 function App() {
 
@@ -61,6 +62,20 @@ function App() {
             user
               ? (
                   <DashboardPage />
+                )
+              : (
+                  <Navigate
+                    to="/login"
+                  />
+                )
+          }
+        />
+        <Route
+          path="/problems"
+          element={
+            user
+              ? (
+                  <ProblemsPage />
                 )
               : (
                   <Navigate

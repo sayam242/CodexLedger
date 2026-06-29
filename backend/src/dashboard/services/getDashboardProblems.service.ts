@@ -1,7 +1,8 @@
 import prisma from "../../lib/prisma";
 
 export async function getDashboardProblems(
-    userId: string
+    userId: string,
+    limit?: number,
 ){
     const problems =
     await prisma.problem.findMany({
@@ -30,7 +31,8 @@ export async function getDashboardProblems(
 
             updatedAt: "desc"
 
-        }
+        },
+        take: limit
 
     });
 

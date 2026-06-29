@@ -1,19 +1,12 @@
 import { Router } from "express";
 
-import { authenticate }
-from "../../middlewares/auth.middleware";
+import { authenticateSession }from "../../middlewares/sessionAuth.middleware";
 
-import {
-  getProblems
-}
-from "../controllers/dashboard.controller";
+import {getProblems,getStats}from "../controllers/dashboard.controller";
 
 const router = Router();
 
-router.get(
-  "/problems",
-  authenticate,
-  getProblems
-);
+router.get("/problems",authenticateSession,getProblems);
+router.get("/stats",authenticateSession,getStats);
 
 export default router;

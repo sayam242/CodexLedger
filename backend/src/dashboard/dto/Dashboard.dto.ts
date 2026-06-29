@@ -27,3 +27,9 @@ export interface DashboardProblemDto {
     submissions: DashboardSubmissionDto[];
 
 }
+
+export interface DashboardStats {
+
+    totalSolved: number;
+    
+}

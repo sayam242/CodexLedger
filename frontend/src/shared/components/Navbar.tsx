@@ -7,9 +7,10 @@ import {
 } from "lucide-react";
 
 import UserAvatar from "./UserAvtar";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-
+  const navigate = useNavigate();
   return (
 
     <header className="
@@ -71,7 +72,7 @@ export default function Navbar() {
             gap-2
             text-muted-foreground
             hover:text-foreground
-          ">
+          " onClick={() => navigate("/problems")}>
 
             <FileCode2 size={18} />
 

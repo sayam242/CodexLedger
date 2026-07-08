@@ -15,44 +15,43 @@ export default function DashboardPage() {
   return (
 
     <AppLayout>
+        <div className="max-w-7xl mx-auto space-y-6 px-6 py-6">
 
-      <div className="space-y-6">
+          <DashboardHeader stats={{ totalSolved: stats?.totalSolved ?? 0 }} />
 
-        <DashboardHeader stats={{ totalSolved: stats?.totalSolved ?? 0 }} />
+          <FilterBar />
 
-        <FilterBar />
+          <div
+            className="
+              space-y-4
+            "
+          >
 
-        <div
-    className="
-      space-y-4
-    "
-  >
+          {
 
-    {
+            problems.map(
 
-      problems.map(
+                problem =>
 
-          problem =>
+                  <ProblemCard
 
-            <ProblemCard
+                    key={
+                      problem.problemId
+                    }
 
-              key={
-                problem.problemId
-              }
+                    problem={
+                      problem
+                    }
 
-              problem={
-                problem
-              }
+                  />
 
-            />
+              )
 
-        )
+            }
 
-      }
+          </div>
 
-    </div>
-
-      </div>
+        </div>
 
     </AppLayout>
 

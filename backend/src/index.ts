@@ -9,6 +9,8 @@ import dotenv from "dotenv";
 import syncRoutes from "./extension/routes/sync.routes";
 import authRoutes from "./auth/routes/auth.routes";
 import dashboardRoutes from "./dashboard/routes/dashboard.routes";
+import detailedProblemRoutes from "./detailedProblem/routes/detailedProblem.routes";
+import notesRoutes from "./notes/routes/notes.routes";
 import cookieParser from "cookie-parser";
 
 // Initialize environment variables
@@ -43,8 +45,9 @@ app.use(
 // use Routes
 app.use("/api/sync", syncRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api", detailedProblemRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use("/api/problems", notesRoutes);
 // Start the server
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on port ${process.env.PORT}`);

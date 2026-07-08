@@ -12,6 +12,7 @@ import DashboardPage from "./dashboard/pages/DashboardPage";
 import ConnectExtensionPage from "./auth/pages/ConnectExtenssionPage";
 import APPLayout from "./shared/layout/AppLayout";
 import ProblemsPage from "./problems/pages/ProblemsPage";
+import ProblemDetailPage from "./detailedProblem/pages/ProblemDetailPage";
 
 function App() {
 
@@ -76,6 +77,21 @@ function App() {
             user
               ? (
                   <ProblemsPage />
+                )
+              : (
+                  <Navigate
+                    to="/login"
+                  />
+                )
+          }
+        />
+
+        <Route
+          path="/problems/:problemId"
+          element={
+            user
+              ? (
+                  <ProblemDetailPage />
                 )
               : (
                   <Navigate

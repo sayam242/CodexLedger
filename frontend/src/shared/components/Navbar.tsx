@@ -33,7 +33,8 @@ export default function Navbar() {
           gap-2
           text-xl
           font-bold
-        ">
+          cursor-pointer
+        " onClick={() => navigate("/")}>
           
           <Code className="bg-black text-white px-1 rounded" size={35} />
 
@@ -58,7 +59,8 @@ export default function Navbar() {
             gap-2
             text-muted-foreground
             hover:text-foreground
-          ">
+            cursor-pointer
+          " onClick={() => navigate("/dashboard")}>
 
             <LayoutDashboard size={18} />
 
@@ -72,6 +74,7 @@ export default function Navbar() {
             gap-2
             text-muted-foreground
             hover:text-foreground
+            cursor-pointer
           " onClick={() => navigate("/problems")}>
 
             <FileCode2 size={18} />

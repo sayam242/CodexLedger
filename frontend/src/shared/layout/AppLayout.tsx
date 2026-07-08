@@ -17,11 +17,13 @@ children
 return (
 
 
-<div className="min-h-screen bg-background">
-  <Navbar />
+<div className="h-screen bg-background flex flex-col overflow-hidden">
+  <div className="flex-shrink-0">
+    <Navbar />
+  </div>
 
-  <main className="px-8 py-6">
-
+  <main className="flex-1 min-h-0 px-8 py-6 overflow-y-auto overscroll-contain">
+  
     {children}
 
   </main>

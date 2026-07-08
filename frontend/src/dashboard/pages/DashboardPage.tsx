@@ -16,7 +16,7 @@ export default function DashboardPage() {
 
     <AppLayout>
 
-      <div className="space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-6 py-6">
 
         <DashboardHeader stats={{ totalSolved: stats?.totalSolved ?? 0 }} />
 

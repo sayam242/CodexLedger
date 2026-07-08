@@ -15,6 +15,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   problems  Problem[]
+  
 }
 
 model Problem {
@@ -30,6 +31,7 @@ model Problem {
   content       ProblemContent?
   topics        ProblemTopic[]
   submissions   Submission[]
+  note          ProblemNote?
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
@@ -80,4 +82,17 @@ model ProblemTopic {
 
   @@id([problemId, topicId])
   @@index([topicId])
+}
+
+model ProblemNote {
+  id         String   @id @default(cuid())
+
+  problemId  String   @unique
+
+  content    String   
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }

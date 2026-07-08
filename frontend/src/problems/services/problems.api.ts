@@ -7,14 +7,11 @@ import type {
 }
 from "../types/problem.types";
 
-const BASE_URL =
-    "http://localhost:5000/api/dashboard";
-
 export function fetchProblems() {
 
     return apiFetch<ProblemCardData[]>(
 
-        `${BASE_URL}/problems`
+        `/api/dashboard/problems`
 
     );
 
@@ -24,7 +21,7 @@ export function fetchDashboardStats() {
 
     return apiFetch<DashboardStats>(
 
-        `${BASE_URL}/stats`
+        `/api/dashboard/stats`
 
     );
 

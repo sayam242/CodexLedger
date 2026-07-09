@@ -3,7 +3,7 @@ export interface ProblemMeta {
   problemTitle: string;
   slug: string;
   problemUrl: string;
-
+  solved: boolean;
   platform: string;
   difficulty: string;
 }

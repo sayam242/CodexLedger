@@ -6,6 +6,7 @@ export async function saveProblem(
   userId: string
 ) {
 
+  const isSolved =problem.submission?.status === "Accepted";
   await prisma.$transaction(async(tx)=>{
 
       
@@ -21,7 +22,8 @@ export async function saveProblem(
         difficulty: problem.meta.difficulty,
         title: problem.meta.problemTitle,
         url: problem.meta.problemUrl,
-        problemNumber: problem.meta.problemNumber
+        problemNumber: problem.meta.problemNumber,
+        solved:problem.submission?.status=="Accepted" ? true : false,
       },
       create:{
         userId: userId,

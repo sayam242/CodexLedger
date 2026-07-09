@@ -87,6 +87,7 @@ export default function ProblemDescription({
         className="
           flex
           gap-2
+          pt-5
           border-b
           shrink-0
         "
@@ -118,13 +119,14 @@ export default function ProblemDescription({
 
                   border-b-2
 
+                  cursor-pointer
+
                   ${
 
                     activeTab === tab.id
 
-                      ? "border-blue-500 text-blue-600"
-
-                      : "border-transparent text-gray-600 hover:text-gray-900"
+                      ? "border-foreground text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
 
                   }
 
@@ -151,7 +153,8 @@ export default function ProblemDescription({
           flex-1
           min-h-0
           overflow-hidden
-          bg-white
+          border-gray-200
+           shadow-md
         "
       >
 
@@ -160,7 +163,7 @@ export default function ProblemDescription({
             h-full
             overflow-y-auto
             scroll-smooth
-            p-6
+            p-4
           "
         >
 

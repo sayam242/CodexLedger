@@ -74,7 +74,7 @@ export default function EditorToolbar({
         "
       >
 
-        {submission.runtime !== undefined && (
+        {submission.runtime !== undefined ? (
 
           <span>
 
@@ -82,9 +82,9 @@ export default function EditorToolbar({
 
           </span>
 
-        )}
+        ) : <span>_</span>}
 
-        {submission.memory !== undefined && (
+        {submission.memory !== undefined ? (
 
           <span>
 
@@ -92,7 +92,7 @@ export default function EditorToolbar({
 
           </span>
 
-        )}
+        ) : <span>_</span>}
 
         <span className="text-gray-400">
 

@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import AppLayout from "@/shared/layout/AppLayout";
+import LoadingPage from "@/shared/components/LoadingPage";
 import LeftPanel from "../components/layout/LeftPanel";
 import RightPanel from "../components/layout/RightPanel";
 import { useProblemDetail } from "../hooks/useProblemDetail";
@@ -45,7 +46,12 @@ export default function ProblemDetailPage() {
     } = useProblemDetail(problemId);
 
     if (loading) return (
-      <div>Loading...</div>
+      <AppLayout>
+        <LoadingPage
+          message="Loading problem"
+          subtitle="Fetching problem details and submissions"
+        />
+      </AppLayout>
     );
 
     if (error) return (

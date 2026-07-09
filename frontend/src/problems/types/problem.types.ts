@@ -14,10 +14,16 @@ export interface DashboardFilters {
   status: SubmissionStatus | "All";
 
 }
-interface FilterBarProps {
-
-  filters: DashboardFilters;
-
+export interface ProblemFilters {
+  search: string;
+  topics: string[];
+  difficulty: string[];
+  solved?: boolean;
+  fromDate?: string;
+  toDate?: string;
+  sortOrder: "asc" | "desc";
+  page: number;
+  limit: number;
 }
 
 export type SubmissionStatus =

@@ -29,10 +29,10 @@ export default function LeftPanel({
         flex
         flex-col
         overflow-hidden
-        border-r
         bg-white
         px-6
-        py-6
+        pt-6
+        pb-1
         gap-6
       "
     >

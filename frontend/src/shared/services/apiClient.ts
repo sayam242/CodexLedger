@@ -1,26 +1,4 @@
-// export async function apiFetch<T>(
-//   url: string
-// ): Promise<T> {
 
-//   const response =
-//     await fetch(
-//       url,
-//       {
-//         credentials: "include"
-//       }
-//     );
-
-//   if (!response.ok) {
-
-//     throw new Error(
-//       "API request failed"
-//     );
-
-//   }
-
-//   return response.json();
-
-// }
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 

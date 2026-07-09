@@ -1,9 +1,10 @@
-import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
 
 import type {
     DashboardStats
 }
-from "../../types/dashboard.types";
+from "../../types/problem.types";
 
 interface DashboardHeaderProps {
 
@@ -23,30 +24,54 @@ export default function DashboardHeader(
             className="
                 flex
                 items-center
-                gap-3
+                gap-2
+                text-sm
+                text-muted-foreground
             "
         >
 
-            <h1
+            <Link
+                to="/dashboard"
                 className="
-                    text-3xl
-                    font-bold
+                    hover:text-foreground
+                    transition-colors
                 "
             >
 
+                Dashboard
+
+            </Link>
+
+            <ChevronRight
+                className="
+                    h-4
+                    w-4
+                "
+            />
+
+            <span>
                 Recent Problems Solved
+            </span>
 
-            </h1>
+            <ChevronRight
+                className="
+                    h-4
+                    w-4
+                "
+            />
 
-            <Badge
-                variant="secondary"
+            <span
+                className="
+                    font-bold
+                    text-foreground
+                "
             >
 
                 {stats.totalSolved}
                 {" "}
                 Solved
 
-            </Badge>
+            </span>
 
         </div>
 

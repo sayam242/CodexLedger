@@ -1,60 +1,99 @@
-import {
-  Button
-} from "@/components/ui/button";
-import {
-  Calendar,
-  CircleCheck,
-  XIcon,
-  Tag
-  
-} from "lucide-react";
+import type { ProblemFilters } from "../../types/problem.types";
 
-export default function FilterBar() {
+import SearchInput from "./SearchInput";
+import MultiSelectDropdown from "./MultiSelectDropdown";
+import StatusFilter from "./StatusFilter";
+import DateRangeFilter from "./DateRangeFilter";
 
+import ClearFilters from "./ClearFilters";
+import ActiveFilterChips from "./ActiveFilterChips";
+
+import { Tag, SlidersHorizontal } from "lucide-react";
+
+interface FilterBarProps {
+  filters: ProblemFilters;
+  onUpdateFilter: <K extends keyof ProblemFilters>(
+    key: K,
+    value: ProblemFilters[K]
+  ) => void;
+  onToggleArrayFilter: (
+    key: "topics" | "difficulty",
+    value: string
+  ) => void;
+  onClearFilters: () => void;
+  hasActiveFilters: boolean;
+}
+
+const TOPIC_OPTIONS = [
+  "Array",
+  "String",
+  "Hash Table",
+  "Dynamic Programming",
+  "Math",
+  "Sorting",
+  "Greedy",
+  "Depth-First Search",
+  "Binary Search",
+  "Tree",
+];
+
+const DIFFICULTY_OPTIONS = ["Easy", "Medium", "Hard"];
+
+export default function FilterBar({
+  filters,
+  onUpdateFilter,
+  onToggleArrayFilter,
+  onClearFilters,
+  hasActiveFilters,
+}: FilterBarProps) {
   return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <SearchInput
+          value={filters.search}
+          onChange={(value) => onUpdateFilter("search", value)}
+        />
+        <MultiSelectDropdown
+          label="Topic"
+          icon={Tag}
+          options={TOPIC_OPTIONS}
+          selected={filters.topics}
+          onToggle={(v) => onToggleArrayFilter("topics", v)}
+        />
+        <MultiSelectDropdown
+          label="Difficulty"
+          icon={SlidersHorizontal}
+          options={DIFFICULTY_OPTIONS}
+          selected={filters.difficulty}
+          onToggle={(v) => onToggleArrayFilter("difficulty", v)}
+        />
+        <StatusFilter
+          value={filters.solved}
+          onChange={(value) => onUpdateFilter("solved", value)}
+        />
+        <DateRangeFilter
+          fromDate={filters.fromDate}
+          toDate={filters.toDate}
+          onFromChange={(v) => onUpdateFilter("fromDate", v)}
+          onToChange={(v) => onUpdateFilter("toDate", v)}
+        />
+        <ClearFilters
+          disabled={!hasActiveFilters}
+          onClick={onClearFilters}
+        />
+      </div>
 
-    <div
-      className="
-        flex
-        items-center
-        gap-3
-      "
-    >
-
-      <Button
-        variant="outline"
-      >
-        <Tag className="h-4 w-4" />
-        Topic
-      </Button>
-
-      <Button
-        variant="outline"
-      >
-        <Calendar className="h-4 w-4" />
-        Date Range
-      </Button>
-
-      <Button>
-        <CircleCheck className="h-4 w-4" />
-        Accepted
-      </Button>
-
-      <Button
-        variant="outline"
-      >
-        All Results
-      </Button>
-
-      <Button
-        variant="ghost"
-      >
-        <XIcon className="h-4 w-4" />
-        Clear Filters
-      </Button>
-
+      {/* Active Filter Chips */}
+      <ActiveFilterChips
+        filters={filters}
+        onRemoveTopic={(v) => onToggleArrayFilter("topics", v)}
+        onRemoveDifficulty={(v) => onToggleArrayFilter("difficulty", v)}
+        onClearSolved={() => onUpdateFilter("solved", undefined)}
+        onClearDateRange={() => {
+          onUpdateFilter("fromDate", undefined);
+          onUpdateFilter("toDate", undefined);
+        }}
+      />
     </div>
-
   );
-
 }

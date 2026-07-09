@@ -51,20 +51,59 @@ model ProblemContent {
   updatedAt   DateTime @updatedAt
 }
 
+enum AIAnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
 model Submission {
-  id           String   @id @default(uuid())
-  problemId    String
-  language     String
-  code         String
-  status       String?
-  errorMessage String?
-  submittedAt  DateTime
-  problem      Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                           String   @id @default(uuid())
+
+  problemId                    String
+  language                     String
+  code                         String
+
+  status                       String?
+  errorMessage                 String?
+  submittedAt                  DateTime
+
+  // -----------------------------
+  // AI Complexity Analysis
+  // -----------------------------
+
+  timeComplexity               String?
+  spaceComplexity              String?
+
+  timeComplexityOptions         Json?
+  spaceComplexityOptions        Json?
+
+  complexityReasoning           String?
+
+  complexityAnalysisStatus      AIAnalysisStatus @default(PENDING)
+  complexityAnalysisVersion     Int              @default(1)
+  complexityGeneratedAt         DateTime?
+
+  // -----------------------------
+  // Quiz Progress
+  // -----------------------------
+
+  complexityQuizCompleted       Boolean  @default(false)
+  complexityQuizCompletedAt     DateTime?
+
+  // -----------------------------
+  // Relations
+  // -----------------------------
+
+  problem                       Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
 
   @@unique([problemId, submittedAt])
   @@index([problemId])
+  @@index([complexityAnalysisStatus])
 }
 
 model Topic {

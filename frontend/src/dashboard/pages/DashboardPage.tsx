@@ -1,43 +1,51 @@
 import AppLayout from "@/shared/layout/AppLayout";
 import LoadingPage from "@/shared/components/LoadingPage";
 
-import DashboardHeader from "../components/header/DashboardHeader";
-import ProblemCard from "../components/problems/ProblemCard";
-import { useDashboardProblems } from "../hooks/useDashboardProblems";
 import { useDashboardStats } from "../hooks/useDashboardStats";
+import { useDashboardActivity } from "../hooks/useDashboardActivity";
+import { useRecentProblems } from "../hooks/useRecentProblems";
+
+import StatsCards from "../components/stats/StatsCards";
+import ActivityHeatMap from "../components/charts/ActivityHeatMap";
+import SolvedTrendsChart from "../components/charts/SolvedTrendsChart";
+import TopicDistributionChart from "../components/charts/TopicDistributionChart";
+import RecentProblems from "../components/problems/RecentProblems";
 
 export default function DashboardPage() {
-  const { problems, loading, error } = useDashboardProblems();
-  const { stats, loading: statsLoading } = useDashboardStats();
+    const { stats, loading: statsLoading } = useDashboardStats();
+    const { activity, loading: activityLoading } = useDashboardActivity();
+    const { problems, loading: problemsLoading } = useRecentProblems(5);
 
-  if (loading || statsLoading) {
+    if (statsLoading || activityLoading || problemsLoading) {
+        return (
+            <AppLayout>
+                <LoadingPage />
+            </AppLayout>
+        );
+    }
+
     return (
-      <AppLayout>
-        <LoadingPage />
-      </AppLayout>
+        <AppLayout>
+            <div className="max-w-7xl mx-auto space-y-6 px-6 py-6">
+                <h1 className="text-3xl font-bold">Dashboard</h1>
+
+                {stats && <StatsCards stats={stats} />}
+
+                {activity && <ActivityHeatMap data={activity.heatmap} />}
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {activity && (
+                        <SolvedTrendsChart data={activity.weeklyTrends} />
+                    )}
+                    {activity && (
+                        <TopicDistributionChart
+                            data={activity.topicDistribution}
+                        />
+                    )}
+                </div>
+
+                <RecentProblems problems={problems} />
+            </div>
+        </AppLayout>
     );
-  }
-
-  return (
-    <AppLayout>
-      <div className="max-w-7xl mx-auto space-y-6 px-6 py-6">
-        <DashboardHeader stats={{ totalSolved: stats?.totalSolved ?? 0 }} />
-
-        <div className="space-y-4">
-          {error ? (
-            <p className="text-sm text-destructive">{error}</p>
-          ) : problems.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No problems found.</p>
-          ) : (
-            problems.map((problem) => (
-              <ProblemCard
-                key={problem.problemId}
-                problem={problem}
-              />
-            ))
-          )}
-        </div>
-      </div>
-    </AppLayout>
-  );
 }

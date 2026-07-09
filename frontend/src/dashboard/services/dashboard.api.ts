@@ -1,20 +1,23 @@
-import type {DashboardStats,ProblemCardData} from "../types/dashboard.types";
-import {apiFetch} from "@/shared/services/apiClient";
+import type {
+    DashboardStats,
+    ProblemCardData,
+    DashboardActivityResponse,
+    RecentProblem
+} from "../types/dashboard.types";
+import { apiFetch } from "@/shared/services/apiClient";
 
 export function fetchDashboardStats() {
-
-  return apiFetch<DashboardStats>(
-    `/api/dashboard/stats`
-  );
-
+    return apiFetch<DashboardStats>(`/api/dashboard/stats`);
 }
 
-export function fetchDashboardProblems() {
+export function fetchDashboardProblems(limit: number = 5) {
+    return apiFetch<ProblemCardData[]>(`/api/dashboard/problems?limit=${limit}`);
+}
 
-  return apiFetch<ProblemCardData[]>(
+export function fetchDashboardActivity() {
+    return apiFetch<DashboardActivityResponse>(`/api/dashboard/activity`);
+}
 
-    `/api/dashboard/problems?limit=10`
-
-  );
-
+export function fetchRecentProblems(limit: number = 5) {
+    return apiFetch<RecentProblem[]>(`/api/dashboard/problems?limit=${limit}`);
 }

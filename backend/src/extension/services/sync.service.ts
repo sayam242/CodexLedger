@@ -1,5 +1,6 @@
 import prisma from "../../lib/prisma";
 import { ActiveProblem } from "../types/sync.types";
+import { triggerExplanation } from "../../ai/explanation/service";
 
 export async function saveProblem(
   problem: ActiveProblem,
@@ -7,6 +8,8 @@ export async function saveProblem(
 ) {
 
   const isSolved =problem.submission?.status === "Accepted";
+  let savedProblemId: string = "";
+
   await prisma.$transaction(async(tx)=>{
 
       
@@ -37,6 +40,7 @@ export async function saveProblem(
   
     });
     console.log(savedProblem);
+    savedProblemId = savedProblem.id;
   
     await tx.problemContent.upsert({
       where:{
@@ -112,6 +116,22 @@ export async function saveProblem(
     timeout: 20000
   }
 );
+
+  if (savedProblemId && problem.submission) {
+    const existingExplanation = await prisma.problemExplanation.findUnique({
+      where: { problemId: savedProblemId },
+    });
+
+    if (!existingExplanation) {
+      const submissionCount = await prisma.submission.count({
+        where: { problemId: savedProblemId },
+      });
+
+      if (submissionCount === 1) {
+        triggerExplanation(savedProblemId).catch(console.error);
+      }
+    }
+  }
 
 }
 

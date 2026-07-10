@@ -35,7 +35,6 @@ export default function DashboardPage() {
     return (
         <AppLayout>
             <div className="max-w-7xl mx-auto space-y-6 px-6 py-6">
-                <h1 className="text-3xl font-bold">Dashboard</h1>
 
                 {/* Row 1: Main Stats */}
                 {stats && <StatsCards stats={stats} />}

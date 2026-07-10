@@ -13,6 +13,8 @@ import detailedProblemRoutes from "./detailedProblem/routes/detailedProblem.rout
 import notesRoutes from "./notes/routes/notes.routes";
 import problemRoutes from "./problems/routes/problem.route";
 import aiRoutes from "./ai/complexity/complexity.routes";
+import explanationRoutes from "./ai/explanation/explanation.routes";
+import { startExplanationWorker } from "./ai/explanation/worker";
 import cookieParser from "cookie-parser";
 
 // Initialize environment variables
@@ -52,6 +54,10 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/problems", notesRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/ai", explanationRoutes);
+
+startExplanationWorker();
+
 // Start the server
 app.listen(process.env.PORT,()=>{
     console.log(`Server is running on port ${process.env.PORT}`);

@@ -27,6 +27,7 @@ model Problem {
   url           String
   difficulty    String
   solved        Boolean         @default(false)
+  explanation   ProblemExplanation?
   userId        String
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   content       ProblemContent?
@@ -135,4 +136,27 @@ model ProblemNote {
   updatedAt  DateTime @updatedAt
 
   problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+}
+
+
+
+model ProblemExplanation {
+  id                     String   @id @default(uuid())
+
+  problemId              String   @unique
+
+  explanation            Json
+
+  analysisStatus         AIAnalysisStatus @default(PENDING)
+
+  version                Int      @default(1)
+
+  generatedAt            DateTime?
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  problem                Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([analysisStatus])
 }

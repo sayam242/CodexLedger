@@ -95,6 +95,7 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
       let retryCount = 0;
       const maxRetries = 10;
       const pollInterval = 2000;
+      let timeoutId: ReturnType<typeof setTimeout>;
 
       const pollAnalysis = async () => {
         setIsLoading(true);
@@ -133,12 +134,23 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
           // Still processing - retry
           retryCount++;
           if (retryCount < maxRetries) {
-            setTimeout(pollAnalysis, pollInterval);
+            timeoutId = setTimeout(pollAnalysis, pollInterval);
           } else {
             setError("Analysis timed out");
             setIsLoading(false);
           }
         } catch (err) {
+          // 409 or processing error - keep polling
+          if (err instanceof Error && (err.message.includes("409") || err.message.includes("Processing"))) {
+            retryCount++;
+            if (retryCount < maxRetries) {
+              timeoutId = setTimeout(pollAnalysis, pollInterval);
+            } else {
+              setError("Analysis timed out");
+              setIsLoading(false);
+            }
+            return;
+          }
           console.error("Failed to fetch complexity analysis:", err);
           setError("Failed to load analysis");
           setIsLoading(false);
@@ -146,6 +158,8 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
       };
 
       pollAnalysis();
+
+      return () => clearTimeout(timeoutId);
     }
   }, [submission]);
 

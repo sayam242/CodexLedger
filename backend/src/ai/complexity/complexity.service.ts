@@ -30,51 +30,35 @@ function extractJSON(text: string): unknown | null {
   }
 }
 
-export async function getComplexityAnalysisService(
-  submissionId: string,
-  userId: string
-): Promise<ComplexityResponseDto> {
-  const submission = await prisma.submission.findFirst({
-    where: {
-      id: submissionId,
-      problem: { userId },
-    },
-    include: {
-      problem: {
-        include: {
-          content: true,
-          topics: { include: { topic: true } },
+async function runAIAnalysis(submissionId: string) {
+  try {
+    const submission = await prisma.submission.findUnique({
+      where: { id: submissionId },
+      include: {
+        problem: {
+          include: {
+            content: true,
+            topics: { include: { topic: true } },
+          },
         },
       },
-    },
-  });
+    });
 
-  if (!submission) {
-    throw new Error("Submission not found or unauthorized");
-  }
+    if (!submission) {
+      await prisma.submission.update({
+        where: { id: submissionId },
+        data: { complexityAnalysisStatus: AIAnalysisStatus.FAILED },
+      });
+      return;
+    }
 
-  if (submission.complexityAnalysisStatus === AIAnalysisStatus.COMPLETED) {
-    return formatResponse(submission);
-  }
-
-  if (submission.complexityAnalysisStatus === AIAnalysisStatus.PROCESSING) {
-    throw new Error("Analysis already in progress. Please try again shortly.");
-  }
-
-  await prisma.submission.update({
-    where: { id: submissionId },
-    data: { complexityAnalysisStatus: AIAnalysisStatus.PROCESSING },
-  });
-
-  try {
     const problem = submission.problem;
     const tags = problem.topics.map((pt) => pt.topic.name).join(", ");
-    const examples = problem.content?.plainText || "";
 
     const messages = buildComplexityPrompt(
       problem.title,
       problem.content?.plainText || "",
-      examples,
+      problem.content?.plainText || "",
       "",
       problem.difficulty,
       tags,
@@ -112,19 +96,58 @@ export async function getComplexityAnalysisService(
         complexityGeneratedAt: new Date(),
       },
     });
-
-    const updated = await prisma.submission.findUnique({
-      where: { id: submissionId },
-    });
-
-    return formatResponse(updated!);
   } catch (error) {
+    console.error("AI Analysis failed:", error);
     await prisma.submission.update({
       where: { id: submissionId },
       data: { complexityAnalysisStatus: AIAnalysisStatus.FAILED },
     });
-    throw error;
   }
+}
+
+export async function getComplexityAnalysisService(
+  submissionId: string,
+  userId: string
+): Promise<ComplexityResponseDto> {
+  const submission = await prisma.submission.findFirst({
+    where: {
+      id: submissionId,
+      problem: { userId },
+    },
+    include: {
+      problem: {
+        include: {
+          content: true,
+          topics: { include: { topic: true } },
+        },
+      },
+    },
+  });
+
+  if (!submission) {
+    throw new Error("Submission not found or unauthorized");
+  }
+
+  if (submission.complexityAnalysisStatus === AIAnalysisStatus.COMPLETED) {
+    return formatResponse(submission);
+  }
+
+  if (submission.complexityAnalysisStatus === AIAnalysisStatus.PROCESSING) {
+    return formatResponse(submission);
+  }
+
+  await prisma.submission.update({
+    where: { id: submissionId },
+    data: { complexityAnalysisStatus: AIAnalysisStatus.PROCESSING },
+  });
+
+  runAIAnalysis(submissionId).catch(console.error);
+
+  const processingSubmission = await prisma.submission.findUnique({
+    where: { id: submissionId },
+  });
+
+  return formatResponse(processingSubmission!);
 }
 
 function formatResponse(submission: any): ComplexityResponseDto {

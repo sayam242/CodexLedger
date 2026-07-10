@@ -1,5 +1,6 @@
 export type SubmissionStatus = 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Runtime Error' | 'Compilation Error';
 export type ProblemDifficulty = 'Easy' | 'Medium' | 'Hard';
+export type AIAnalysisStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
 export interface Problem {
   id: string;
@@ -23,7 +24,13 @@ export interface Submission {
   memory?: number;
   submittedAt: string;
   errorMessage?: string;
-
+  timeComplexity?: string;
+  spaceComplexity?: string;
+  timeComplexityOptions?: string[];
+  spaceComplexityOptions?: string[];
+  complexityReasoning?: string;
+  complexityAnalysisStatus: AIAnalysisStatus;
+  complexityQuizCompleted: boolean;
 }
 
 export interface ProblemDetailPageData {

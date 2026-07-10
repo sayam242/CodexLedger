@@ -1,5 +1,5 @@
-import { apiFetch } from '@/shared/services/apiClient';
-import type{ProblemDetailResponse,SubmissionDetailResponse} from "../types/api.types";
+import { apiFetch, apiPost } from '@/shared/services/apiClient';
+import type{ProblemDetailResponse,SubmissionDetailResponse,ComplexityAnalysisResponse,ComplexityQuizAnswerResponse} from "../types/api.types";
 
 
 /**
@@ -36,5 +36,33 @@ export  function fetchSubmissionDetail(
 ): Promise<SubmissionDetailResponse> {
   return apiFetch<SubmissionDetailResponse>(
     `/api/problems/${problemId}/submissions/${submissionId}`
+  );
+}
+
+/**
+ * Fetch or trigger complexity analysis for a submission
+ * 
+ * @param submissionId - The ID of the submission to analyze
+ * @returns Complexity analysis result
+ */
+export function fetchComplexityAnalysis(
+  submissionId: string
+): Promise<ComplexityAnalysisResponse> {
+  return apiFetch<ComplexityAnalysisResponse>(
+    `/api/ai/complexity/${submissionId}`
+  );
+}
+
+/**
+ * Mark complexity quiz as completed for a submission
+ * 
+ * @param submissionId - The ID of the submission
+ * @returns Success message
+ */
+export function markQuizCompleted(
+  submissionId: string
+): Promise<ComplexityQuizAnswerResponse> {
+  return apiPost<ComplexityQuizAnswerResponse>(
+    `/api/ai/complexity/${submissionId}/quiz-complete`
   );
 }

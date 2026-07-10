@@ -10,7 +10,9 @@ import type {
 
   ProblemDetailResponse,
 
-  SubmissionDetailResponse
+  SubmissionDetailResponse,
+
+  ComplexityAnalysisResponse
 
 } from "../types/api.types";
 
@@ -86,7 +88,21 @@ export function mapProblemDetail(
             submission.runtime,
 
           memory:
-            submission.memory
+            submission.memory,
+
+          timeComplexity: undefined,
+
+          spaceComplexity: undefined,
+
+          timeComplexityOptions: undefined,
+
+          spaceComplexityOptions: undefined,
+
+          complexityReasoning: undefined,
+
+          complexityAnalysisStatus: "PENDING" as const,
+
+          complexityQuizCompleted: false
 
         })
 
@@ -129,8 +145,36 @@ export function mapSubmission(
       response.memory,
 
     errorMessage:
-      response.errorMessage
+      response.errorMessage,
+
+    timeComplexity: undefined,
+
+    spaceComplexity: undefined,
+
+    timeComplexityOptions: undefined,
+
+    spaceComplexityOptions: undefined,
+
+    complexityReasoning: undefined,
+
+    complexityAnalysisStatus: "PENDING",
+
+    complexityQuizCompleted: false
 
   };
 
+}
+
+export function mapComplexityAnalysis(
+  response: ComplexityAnalysisResponse
+): Partial<Submission> {
+  return {
+    timeComplexity: response.timeComplexity,
+    spaceComplexity: response.spaceComplexity,
+    timeComplexityOptions: response.timeComplexityOptions,
+    spaceComplexityOptions: response.spaceComplexityOptions,
+    complexityReasoning: response.reasoning,
+    complexityAnalysisStatus: response.analysisStatus,
+    complexityQuizCompleted: response.quizCompleted,
+  };
 }

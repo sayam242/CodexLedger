@@ -3,6 +3,25 @@ import type {
   SubmissionStatus
 } from "./detailedProblem.types";
 
+export type AIAnalysisStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+
+export interface ComplexityAnalysisResponse {
+  submissionId: string;
+  timeComplexity: string;
+  spaceComplexity: string;
+  timeComplexityOptions: string[];
+  spaceComplexityOptions: string[];
+  reasoning: string;
+  analysisStatus: AIAnalysisStatus;
+  analysisVersion: number;
+  generatedAt: string | null;
+  quizCompleted: boolean;
+}
+
+export interface ComplexityQuizAnswerResponse {
+  message: string;
+}
+
 export interface ProblemDetailResponse {
 
   problem: {

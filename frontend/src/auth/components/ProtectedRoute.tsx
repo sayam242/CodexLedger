@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuthContext } from "../context/AuthContext";
 
 export function ProtectedRoute() {
-    const { user, loading } = useAuth();
+    const { user, loading } = useAuthContext();
 
     if (loading) {
         return (
@@ -22,7 +22,7 @@ export function ProtectedRoute() {
 }
 
 export function PublicRoute() {
-    const { user, loading } = useAuth();
+    const { user, loading, loginInProgress } = useAuthContext();
 
     if (loading) {
         return (
@@ -34,7 +34,7 @@ export function PublicRoute() {
         );
     }
 
-    if (user) {
+    if (user && !loginInProgress) {
         return <Navigate to="/dashboard" replace />;
     }
 

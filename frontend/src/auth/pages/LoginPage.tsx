@@ -1,13 +1,16 @@
 import { signInWithGoogle }
 from "../services/authService";
+import { useAuthContext }
+from "../context/AuthContext";
 
 export default function LoginPage() {
+  const { setLoginInProgress } = useAuthContext();
 
   async function handleLogin() {
 
     try {
 
-      await signInWithGoogle();
+      await signInWithGoogle(setLoginInProgress);
 
     }
     catch (error) {

@@ -17,49 +17,48 @@ import {sendTokenToExtension} from "./extensionAuthService";
 const googleProvider =
   new GoogleAuthProvider();
 
-export async function signInWithGoogle():
-Promise<User> {
+export async function signInWithGoogle(
+  setLoginInProgress: (value: boolean) => void
+): Promise<User> {
+  setLoginInProgress(true);
 
-  const result =
-    await signInWithPopup(
-      auth,
-      googleProvider
+  try {
+    const result =
+      await signInWithPopup(
+        auth,
+        googleProvider
+      );
+
+    const user =
+      result.user;
+
+    const token = await loginUser({
+
+      id:
+        user.uid,
+
+      name:
+        user.displayName ?? "",
+
+      email:
+        user.email ?? "",
+
+      photoUrl:
+        user.photoURL ?? ""
+
+    });
+
+    await sendTokenToExtension(
+      token
     );
 
-  const user =
-    result.user;
-
-  const token = await loginUser({
-
-    id:
-      user.uid,
-
-    name:
-      user.displayName ?? "",
-
-    email:
-      user.email ?? "",
-
-    photoUrl:
-      user.photoURL ?? ""
-
-  });
-
-  await sendTokenToExtension(
-    token
-  );
-  setTimeout(
-    () => {
-
-      window.close();
-
-    },
-
-    1500
-  );
-
-  return user;
-
+    return user;
+  } catch (error) {
+    setLoginInProgress(false);
+    throw error;
+  } finally {
+    setLoginInProgress(false);
+  }
 }
 
 export async function signOut(): Promise<void> {

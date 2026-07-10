@@ -92,9 +92,9 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
 
     // Case 3: Not completed - trigger analysis
     if (submission.complexityAnalysisStatus === "PENDING" || submission.complexityAnalysisStatus === "FAILED") {
-      let retryCount = 0;
-      const maxRetries = 10;
-      const pollInterval = 2000;
+      const pollInterval = 3000;
+      const maxPollTime = 180000;
+      const startTime = Date.now();
       let timeoutId: ReturnType<typeof setTimeout>;
 
       const pollAnalysis = async () => {
@@ -131,29 +131,19 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
             return;
           }
 
-          // Still processing - retry
-          retryCount++;
-          if (retryCount < maxRetries) {
+          if (Date.now() - startTime < maxPollTime) {
             timeoutId = setTimeout(pollAnalysis, pollInterval);
           } else {
             setError("Analysis timed out");
             setIsLoading(false);
           }
         } catch (err) {
-          // 409 or processing error - keep polling
-          if (err instanceof Error && (err.message.includes("409") || err.message.includes("Processing"))) {
-            retryCount++;
-            if (retryCount < maxRetries) {
-              timeoutId = setTimeout(pollAnalysis, pollInterval);
-            } else {
-              setError("Analysis timed out");
-              setIsLoading(false);
-            }
-            return;
+          if (Date.now() - startTime < maxPollTime) {
+            timeoutId = setTimeout(pollAnalysis, pollInterval);
+          } else {
+            setError("Analysis timed out");
+            setIsLoading(false);
           }
-          console.error("Failed to fetch complexity analysis:", err);
-          setError("Failed to load analysis");
-          setIsLoading(false);
         }
       };
 

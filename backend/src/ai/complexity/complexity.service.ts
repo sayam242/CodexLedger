@@ -98,10 +98,14 @@ async function runAIAnalysis(submissionId: string) {
     });
   } catch (error) {
     console.error("AI Analysis failed:", error);
-    await prisma.submission.update({
-      where: { id: submissionId },
-      data: { complexityAnalysisStatus: AIAnalysisStatus.FAILED },
-    });
+    try {
+      await prisma.submission.update({
+        where: { id: submissionId },
+        data: { complexityAnalysisStatus: AIAnalysisStatus.FAILED },
+      });
+    } catch (updateError) {
+      console.error("CRITICAL: Failed to set FAILED status:", updateError);
+    }
   }
 }
 

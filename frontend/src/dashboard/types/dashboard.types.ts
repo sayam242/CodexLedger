@@ -6,6 +6,7 @@ export interface DashboardStats {
     easySolved: number;
     mediumSolved: number;
     hardSolved: number;
+    currentStreak?: number;
 }
 
 export interface HeatmapData {
@@ -64,26 +65,16 @@ export interface SubmissionData {
     submittedAt: string;
 }
 
-export interface RecentProblem {
+
+
+export interface StrugglingProblem {
     problemId: string;
     problemNumber: string | null;
     title: string;
     difficulty: string;
-    platform: string;
-    url: string;
-    topics: string[];
-    latestSubmission: {
-        status: string;
-        language: string;
-        submittedAt: string;
-    } | null;
-}
-
-export interface StrugglingProblem {
-    problemId: string;
-    title: string;
-    difficulty: string;
-    rejectionCount: number;
+    totalSubmissions: number;
+    acceptedSubmissions: number;
+    acceptanceRate: number;
 }
 
 export interface SubmissionTimelineItem {
@@ -95,7 +86,3 @@ export interface SubmissionTimelineItem {
     submittedAt: string;
 }
 
-export interface DashboardStrugglingResponse {
-    strugglingProblems: StrugglingProblem[];
-    recentSubmissions: SubmissionTimelineItem[];
-}

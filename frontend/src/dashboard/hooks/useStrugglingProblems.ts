@@ -3,7 +3,7 @@ import { fetchStrugglingProblems } from "../services/dashboard.api";
 import type { StrugglingProblem } from "../types/dashboard.types";
 
 export function useStrugglingProblems() {
-    const [problems, setProblems] = useState<StrugglingProblem[] | null>(null);
+    const [problems, setProblems] = useState<StrugglingProblem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

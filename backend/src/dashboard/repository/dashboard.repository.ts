@@ -138,3 +138,79 @@ export async function findRecentSolvedProblems(userId: string, limit: number) {
         take: limit
     });
 }
+
+export async function findStrugglingProblems(userId: string, limit: number) {
+    const problems = await prisma.problem.findMany({
+        where: {
+            userId,
+            submissions: {
+                some: {}
+            }
+        },
+        include: {
+            submissions: {
+                select: {
+                    status: true
+                }
+            }
+        }
+    });
+
+    const struggling = problems.map(problem => {
+        const totalSubmissions = problem.submissions.length;
+        const acceptedSubmissions = problem.submissions.filter(
+            s => s.status === 'Accepted'
+        ).length;
+        const acceptanceRate = totalSubmissions > 0
+            ? Math.round((acceptedSubmissions / totalSubmissions) * 100)
+            : 0;
+
+        return {
+            problemId: problem.id,
+            problemNumber: problem.problemNumber,
+            title: problem.title,
+            difficulty: problem.difficulty,
+            totalSubmissions,
+            acceptedSubmissions,
+            acceptanceRate
+        };
+    });
+
+    struggling.sort((a, b) => {
+        if (a.acceptanceRate !== b.acceptanceRate) {
+            return a.acceptanceRate - b.acceptanceRate;
+        }
+        return b.totalSubmissions - a.totalSubmissions;
+    });
+
+    return struggling.slice(0, limit);
+}
+
+export async function countCurrentStreak(userId: string): Promise<number> {
+    const submissions = await prisma.submission.findMany({
+        where: {
+            problem: { userId }
+        },
+        orderBy: { submittedAt: 'desc' }
+    });
+
+    if (submissions.length === 0) return 0;
+
+    let streak = 0;
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Normalize to midnight
+
+    for (const submission of submissions) {
+        const submissionDate = new Date(submission.submittedAt);
+        submissionDate.setHours(0, 0, 0, 0); // Normalize to midnight
+
+        if (submissionDate.getTime() === currentDate.getTime()) {
+            streak++;
+            currentDate.setDate(currentDate.getDate() - 1); // Move to previous day
+        } else if (submissionDate.getTime() < currentDate.getTime()) {
+            break; // Streak is broken
+        }
+    }
+
+    return streak;
+}

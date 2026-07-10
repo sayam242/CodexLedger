@@ -5,7 +5,6 @@ import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardActivity } from "../hooks/useDashboardActivity";
 import { useRecentProblems } from "../hooks/useRecentProblems";
 import { useStrugglingProblems } from "../hooks/useStrugglingProblems";
-import { useRecentSubmissions } from "../hooks/useRecentSubmissions";
 
 import StatsCards from "../components/stats/StatsCards";
 import SubmissionStatsRow from "../components/stats/SubmissionStatsRow";
@@ -15,7 +14,6 @@ import StrugglingProblemsChart from "../components/charts/StrugglingProblemsChar
 import SolvedTrendsChart from "../components/charts/SolvedTrendsChart";
 import TopicDistributionChart from "../components/charts/TopicDistributionChart";
 import RecentProblems from "../components/problems/RecentProblems";
-import SubmissionTimeline from "../components/problems/SubmissionTimeline";
 import { HeatmapSkeleton } from "../components/ui/Skeleton";
 
 export default function DashboardPage() {
@@ -23,7 +21,6 @@ export default function DashboardPage() {
     const { activity, loading: activityLoading } = useDashboardActivity();
     const { problems, loading: problemsLoading } = useRecentProblems(5);
     const { problems: strugglingProblems, loading: strugglingLoading } = useStrugglingProblems();
-    const { submissions, loading: submissionsLoading } = useRecentSubmissions(8);
 
     const isLoading = statsLoading || activityLoading || problemsLoading;
 
@@ -75,11 +72,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Row 6: Submission Timeline + Recent Problems */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <SubmissionTimeline
-                        submissions={submissions}
-                        loading={submissionsLoading}
-                    />
+                <div>
                     <RecentProblems problems={problems} />
                 </div>
             </div>

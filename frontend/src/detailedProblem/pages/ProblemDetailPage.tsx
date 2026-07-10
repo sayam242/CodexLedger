@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import AppLayout from "@/shared/layout/AppLayout";
 import LoadingPage from "@/shared/components/LoadingPage";
+import NotFound from "@/shared/components/NotFound";
 import LeftPanel from "../components/layout/LeftPanel";
 import RightPanel from "../components/layout/RightPanel";
 import ComplexityPopup from "../components/complexity/ComplexityPopup";
@@ -15,9 +16,7 @@ export default function ProblemDetailPage() {
   if (!problemId) {
     return (
       <AppLayout>
-        <div className="flex items-center justify-center h-screen">
-          Invalid problem ID
-        </div>
+        <NotFound message="Invalid problem ID" />
       </AppLayout>
     );
   }
@@ -57,11 +56,24 @@ export default function ProblemDetailPage() {
   );
 
   if (error) return (
-    <div>Error</div>
+    <AppLayout>
+        <NotFound message={`${error}`} />
+    </AppLayout>
   );
 
-  if (!problem || !selectedSubmission) return (
-    <div>Not Found</div>
+  if (!problem ) return (
+    <AppLayout>
+      <NotFound message="This problem could not be found." />
+    </AppLayout>
+  );
+
+  if (!selectedSubmission) return (
+    <AppLayout>
+      <LoadingPage
+        message="Loading problem"
+        subtitle="Fetching problem details and submissions"
+      />
+    </AppLayout>
   );
 
   return (

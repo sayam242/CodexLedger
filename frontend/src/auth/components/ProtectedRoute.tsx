@@ -1,16 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import LoadingPage from "@/shared/components/LoadingPage";
 
 export function ProtectedRoute() {
     const { user, loading } = useAuthContext();
 
     if (loading) {
         return (
-            <div className="h-screen flex items-center justify-center">
-                <div className="animate-pulse text-xl font-medium text-muted-foreground">
-                    Checking Session...
-                </div>
-            </div>
+            <LoadingPage></LoadingPage>
         );
     }
 

@@ -114,11 +114,7 @@ export default function RecentProblems({ problems, loading = false }: RecentProb
                                     >
                                         {problem.difficulty}
                                     </span>
-                                    {problem.latestSubmission && (
-                                        <span className="text-xs text-muted-foreground">
-                                            {formatDate(problem.latestSubmission.submittedAt)}
-                                        </span>
-                                    )}
+                                    
                                 </div>
                             </div>
                         ))}

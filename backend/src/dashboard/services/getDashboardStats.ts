@@ -3,7 +3,8 @@ import {
     countTotalProblems,
     countTotalSubmissions,
     countAcceptedSubmissions,
-    countSolvedProblemsByDifficulty
+    countSolvedProblemsByDifficulty,
+    countCurrentStreak
 } from "../repository/dashboard.repository";
 
 import type { DashboardStats } from "../dto/Dashboard.dto";
@@ -16,15 +17,16 @@ export async function getDashboardStats(
         totalProblems,
         totalSubmissions,
         acceptedSubmissions,
-        difficultyCounts
+        difficultyCounts,
+        currentStreak
     ] = await Promise.all([
         countSolvedProblems(userId),
         countTotalProblems(userId),
         countTotalSubmissions(userId),
         countAcceptedSubmissions(userId),
-        countSolvedProblemsByDifficulty(userId)
+        countSolvedProblemsByDifficulty(userId),
+        countCurrentStreak(userId)
     ]);
-
     const easySolved = difficultyCounts.find(d => d.difficulty === 'Easy')?.count ?? 0;
     const mediumSolved = difficultyCounts.find(d => d.difficulty === 'Medium')?.count ?? 0;
     const hardSolved = difficultyCounts.find(d => d.difficulty === 'Hard')?.count ?? 0;
@@ -40,6 +42,7 @@ export async function getDashboardStats(
         acceptanceRate,
         easySolved,
         mediumSolved,
-        hardSolved
+        hardSolved,
+        currentStreak
     };
 }

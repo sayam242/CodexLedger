@@ -40,7 +40,7 @@ export default function SubmissionStatsRow({ stats, loading = false }: Submissio
         },
         {
             title: "Current Streak",
-            value: "12 days",
+            value: stats.currentStreak ? `${stats.currentStreak} days` : "0 days",
             icon: Flame,
             iconColor: "text-orange-600",
             bgTint: "bg-orange-50 dark:bg-orange-950/30"

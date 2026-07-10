@@ -1,174 +1,153 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    Cell
-} from "recharts";
-
-interface StrugglingProblem {
-    problemId: string;
-    title: string;
-    difficulty: string;
-    rejectionCount: number;
-}
+import { Button } from "@/components/ui/button";
+import { ArrowRight, TrendingDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { StrugglingProblem } from "../../types/dashboard.types";
 
 interface StrugglingProblemsChartProps {
-    problems: StrugglingProblem[] | null;
+    problems: StrugglingProblem[];
     loading?: boolean;
 }
 
-const DIFFICULTY_COLORS: Record<string, string> = {
-    Easy: "#10b981",
-    Medium: "#f59e0b",
-    Hard: "#ef4444"
-};
+function getDifficultyColor(difficulty: string): string {
+    switch (difficulty) {
+        case "Easy":
+            return "bg-emerald-100 text-emerald-700 border-emerald-200";
+        case "Medium":
+            return "bg-amber-100 text-amber-700 border-amber-200";
+        case "Hard":
+            return "bg-red-100 text-red-700 border-red-200";
+        default:
+            return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+}
 
-const PLACEHOLDER_DATA = [
-    { shortTitle: "Two Sum", difficulty: "Easy", rejectionCount: 3 },
-    { shortTitle: "Valid Parentheses", difficulty: "Medium", rejectionCount: 2 },
-    { shortTitle: "Merge K Lists", difficulty: "Hard", rejectionCount: 5 }
+function getAcceptanceColor(rate: number): string {
+    if (rate >= 60) return "text-emerald-600";
+    if (rate >= 30) return "text-amber-600";
+    return "text-red-600";
+}
+
+const PLACEHOLDER_DATA: StrugglingProblem[] = [
+    { problemId: "1", problemNumber: "42", title: "Trapping Rain Water", difficulty: "Hard", totalSubmissions: 15, acceptedSubmissions: 3, acceptanceRate: 20 },
+    { problemId: "2", problemNumber: "23", title: "Merge K Sorted Lists", difficulty: "Hard", totalSubmissions: 12, acceptedSubmissions: 4, acceptanceRate: 33 },
+    { problemId: "3", problemNumber: "56", title: "Merge Intervals", difficulty: "Medium", totalSubmissions: 8, acceptedSubmissions: 5, acceptanceRate: 63 }
 ];
 
 export default function StrugglingProblemsChart({
     problems,
     loading = false
 }: StrugglingProblemsChartProps) {
-    if (loading || !problems) {
+    const navigate = useNavigate();
+
+    if (loading) {
         return (
             <Card className="h-full">
-                <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg">Most Struggling Problems</CardTitle>
-                        <span className="text-xs text-muted-foreground">Top 10 by rejections</span>
-                    </div>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-lg">Most Struggling Problems</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div className="flex items-center justify-center h-[200px]">
-                        <div className="animate-pulse flex flex-col items-center gap-2">
-                            <div className="h-4 w-48 bg-muted rounded" />
-                            <div className="h-4 w-36 bg-muted rounded" />
-                            <div className="h-4 w-44 bg-muted rounded" />
+                <CardContent className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg border">
+                            <div className="flex items-center gap-3">
+                                <div className="h-4 w-8 bg-muted rounded animate-pulse" />
+                                <div className="h-4 w-40 bg-muted rounded animate-pulse" />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="h-5 w-14 bg-muted rounded-full animate-pulse" />
+                                <div className="h-4 w-12 bg-muted rounded animate-pulse" />
+                            </div>
                         </div>
-                    </div>
+                    ))}
                 </CardContent>
             </Card>
         );
     }
 
-    const chartData = problems.slice(0, 10).map((p) => ({
-        ...p,
-        shortTitle: p.title.length > 20 ? p.title.slice(0, 20) + "..." : p.title
-    }));
-
     return (
         <Card className="h-full">
-            <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Most Struggling Problems</CardTitle>
-                    <span className="text-xs text-muted-foreground">
-                        Top 10 by rejections
-                    </span>
-                </div>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-lg">Most Struggling Problems</CardTitle>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate("/problems")}
+                    className="gap-1"
+                >
+                    View All
+                    <ArrowRight className="h-4 w-4" />
+                </Button>
             </CardHeader>
             <CardContent>
-                {chartData.length === 0 ? (
-                    <div>
-                        <ResponsiveContainer width="100%" height={200}>
-                            <BarChart
-                                data={PLACEHOLDER_DATA}
-                                layout="vertical"
-                                margin={{ left: 10, right: 20, top: 5, bottom: 5 }}
+                {problems.length === 0 ? (
+                    <div className="space-y-3">
+                        {PLACEHOLDER_DATA.map((problem) => (
+                            <div
+                                key={problem.problemId}
+                                className="flex items-center justify-between p-3 rounded-lg border bg-muted/30"
                             >
-                                <XAxis type="number" hide />
-                                <YAxis
-                                    type="category"
-                                    dataKey="shortTitle"
-                                    width={140}
-                                    tick={{ fontSize: 11 }}
-                                />
-                                <Bar
-                                    dataKey="rejectionCount"
-                                    radius={[0, 4, 4, 0]}
-                                    barSize={20}
-                                    opacity={0.3}
-                                >
-                                    {PLACEHOLDER_DATA.map((entry, index) => (
-                                        <Cell
-                                            key={index}
-                                            fill={DIFFICULTY_COLORS[entry.difficulty] || "#94a3b8"}
-                                        />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm font-mono" style={{ color: "hsl(var(--muted-foreground))" }}>
+                                        #{problem.problemNumber}
+                                    </span>
+                                    <span className="font-medium">{problem.title}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span
+                                        className={cn(
+                                            "text-xs font-medium px-2 py-0.5 rounded-full border",
+                                            getDifficultyColor(problem.difficulty)
+                                        )}
+                                    >
+                                        {problem.difficulty}
+                                    </span>
+                                    <div className="flex items-center gap-1">
+                                        <TrendingDown className={cn("h-3 w-3", getAcceptanceColor(problem.acceptanceRate))} />
+                                        <span className={cn("text-xs font-medium", getAcceptanceColor(problem.acceptanceRate))}>
+                                            {problem.acceptanceRate}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                         <p className="text-xs text-muted-foreground text-center mt-2">
                             Keep practicing to identify your struggling areas
                         </p>
                     </div>
                 ) : (
-                    <>
-                        <ResponsiveContainer width="100%" height={350}>
-                            <BarChart
-                                data={chartData}
-                                layout="vertical"
-                                margin={{ left: 10, right: 20, top: 5, bottom: 5 }}
+                    <div className="space-y-3">
+                        {problems.slice(0, 5).map((problem) => (
+                            <div
+                                key={problem.problemId}
+                                className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 cursor-pointer transition-colors"
+                                onClick={() => navigate(`/problems/${problem.problemId}`)}
                             >
-                                <XAxis
-                                    type="number"
-                                    allowDecimals={false}
-                                    tick={{ fontSize: 11 }}
-                                />
-                                <YAxis
-                                    type="category"
-                                    dataKey="shortTitle"
-                                    width={140}
-                                    tick={{ fontSize: 11 }}
-                                />
-                                <Tooltip
-                                    formatter={(value: number) => [
-                                        `${value} rejections`,
-                                        "Failed Submissions"
-                                    ]}
-                                    labelFormatter={(label) => {
-                                        const problem = chartData.find(
-                                            (p) => p.shortTitle === label
-                                        );
-                                        return problem ? problem.title : label;
-                                    }}
-                                    contentStyle={{
-                                        borderRadius: "8px",
-                                        border: "1px solid hsl(var(--border))",
-                                        backgroundColor: "hsl(var(--card))"
-                                    }}
-                                />
-                                <Bar dataKey="rejectionCount" radius={[0, 4, 4, 0]} barSize={20}>
-                                    {chartData.map((entry) => (
-                                        <Cell
-                                            key={entry.problemId}
-                                            fill={
-                                                DIFFICULTY_COLORS[entry.difficulty] || "#94a3b8"
-                                            }
-                                        />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                        <div className="flex items-center gap-4 mt-4 justify-center">
-                            {Object.entries(DIFFICULTY_COLORS).map(([key, color]) => (
-                                <div key={key} className="flex items-center gap-1.5">
-                                    <div
-                                        className="w-2.5 h-2.5 rounded-full"
-                                        style={{ backgroundColor: color }}
-                                    />
-                                    <span className="text-xs text-muted-foreground">{key}</span>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm text-muted-foreground font-mono">
+                                        #{problem.problemNumber || "—"}
+                                    </span>
+                                    <span className="font-medium">{problem.title}</span>
                                 </div>
-                            ))}
-                        </div>
-                    </>
+                                <div className="flex items-center gap-2">
+                                    <span
+                                        className={cn(
+                                            "text-xs font-medium px-2 py-0.5 rounded-full border",
+                                            getDifficultyColor(problem.difficulty)
+                                        )}
+                                    >
+                                        {problem.difficulty}
+                                    </span>
+                                    <div className="flex items-center gap-1">
+                                        <TrendingDown className={cn("h-3 w-3", getAcceptanceColor(problem.acceptanceRate))} />
+                                        <span className={cn("text-xs font-medium", getAcceptanceColor(problem.acceptanceRate))}>
+                                            {problem.acceptanceRate}%
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </CardContent>
         </Card>

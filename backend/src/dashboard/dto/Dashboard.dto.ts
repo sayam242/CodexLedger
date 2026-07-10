@@ -23,6 +23,7 @@ export interface DashboardStats {
     easySolved: number;
     mediumSolved: number;
     hardSolved: number;
+    currentStreak?: number;
 }
 
 export interface HeatmapData {
@@ -45,4 +46,14 @@ export interface DashboardActivityResponse {
     heatmap: HeatmapData;
     topicDistribution: TopicDistributionItem[];
     weeklyTrends: WeeklyTrendItem[];
+}
+
+export interface StrugglingProblem {
+    problemId: string;
+    problemNumber: string | null;
+    title: string;
+    difficulty: string;
+    totalSubmissions: number;
+    acceptedSubmissions: number;
+    acceptanceRate: number;
 }

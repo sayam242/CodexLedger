@@ -2,7 +2,6 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 
 import { AuthProvider } from "./auth/context/AuthContext";
@@ -14,6 +13,7 @@ import ConnectExtensionPage from "./auth/pages/ConnectExtenssionPage";
 import ProblemsPage from "./problems/pages/ProblemsPage";
 import ProblemDetailPage from "./detailedProblem/pages/ProblemDetailPage";
 import LandingPage from "./landing/pages/LandingPage";
+import NotFoundPage from "./shared/components/NotFoundPage";
 
 function App() {
   return (
@@ -36,8 +36,8 @@ function App() {
             <Route path="/problems/:problemId" element={<ProblemDetailPage />} />
           </Route>
 
-          {/* Catch all - redirect to appropriate page */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch all - show 404 page */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

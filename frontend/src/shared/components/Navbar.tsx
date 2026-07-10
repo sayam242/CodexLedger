@@ -19,7 +19,6 @@ export default function Navbar() {
   const navItems = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { label: "Problems", icon: FileCode2, path: "/problems" },
-    { label: "Analytics", icon: BarChart3, path: null },
     { label: "Settings", icon: Settings, path: null },
   ];
 

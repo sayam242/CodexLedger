@@ -3,6 +3,7 @@ import { AuthRequest } from "../../types/auth.types";
 import { getDashboardProblems } from "../services/getDashboardProblems.service";
 import { getDashboardStats } from "../services/getDashboardStats";
 import { getDashboardActivity } from "../services/getDashboardActivity.service";
+import { getDashboardStruggling } from "../services/getDashboardStruggling.service";
 
 export async function getProblems(
     req: AuthRequest,
@@ -63,6 +64,29 @@ export async function getActivity(
         console.error("Dashboard Activity Error:", error);
         res.status(500).json({
             message: "Failed to fetch activity data"
+        });
+    }
+}
+
+export async function getStruggling(
+    req: AuthRequest,
+    res: Response
+) {
+    try {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        const struggling = await getDashboardStruggling(userId);
+        res.status(200).json(struggling);
+    } catch (error) {
+        console.error("Dashboard Struggling Error:", error);
+        res.status(500).json({
+            message: "Failed to fetch struggling problems"
         });
     }
 }

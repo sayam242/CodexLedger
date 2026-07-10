@@ -1,5 +1,15 @@
+import { signOut } from "@/auth/services/authService";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+async function handleUnauthorized() {
+  try {
+    await signOut();
+  } catch {
+    // sign out even if firebase errors
+  }
+  window.location.href = "/login";
+}
 
 export async function apiFetch<T>(
   url: string
@@ -13,6 +23,11 @@ export async function apiFetch<T>(
         credentials: "include"
       }
     );
+
+  if (response.status === 401) {
+    await handleUnauthorized();
+    throw new Error("Session expired");
+  }
 
   if (!response.ok) {
     console.error(`API Error: ${response.status} - ${response.statusText}`, {
@@ -43,6 +58,11 @@ export async function apiPost<T>(
     },
     body: body ? JSON.stringify(body) : undefined,
   });
+
+  if (response.status === 401) {
+    await handleUnauthorized();
+    throw new Error("Session expired");
+  }
 
   if (!response.ok) {
     console.error(`API Error: ${response.status} - ${response.statusText}`, {

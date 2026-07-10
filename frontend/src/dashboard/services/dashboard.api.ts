@@ -2,7 +2,9 @@ import type {
     DashboardStats,
     ProblemCardData,
     DashboardActivityResponse,
-    RecentProblem
+    RecentProblem,
+    StrugglingProblem,
+    SubmissionTimelineItem
 } from "../types/dashboard.types";
 import { apiFetch } from "@/shared/services/apiClient";
 
@@ -20,4 +22,12 @@ export function fetchDashboardActivity() {
 
 export function fetchRecentProblems(limit: number = 5) {
     return apiFetch<RecentProblem[]>(`/api/dashboard/problems?limit=${limit}`);
+}
+
+export function fetchStrugglingProblems() {
+    return apiFetch<StrugglingProblem[]>(`/api/dashboard/struggling`);
+}
+
+export function fetchRecentSubmissions(limit: number = 8) {
+    return apiFetch<SubmissionTimelineItem[]>(`/api/dashboard/submissions?limit=${limit}`);
 }

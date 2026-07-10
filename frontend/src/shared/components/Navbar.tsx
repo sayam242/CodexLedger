@@ -3,12 +3,14 @@ import {
   Code,
   FileCode2,
   LayoutDashboard,
-  Settings
+  Settings,
+  LogOut
 } from "lucide-react";
 
 import UserAvatar from "./UserAvtar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { signOut } from "@/auth/services/authService";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -20,6 +22,15 @@ export default function Navbar() {
     { label: "Analytics", icon: BarChart3, path: null },
     { label: "Settings", icon: Settings, path: null },
   ];
+
+  async function handleLogout() {
+    try {
+      await signOut();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  }
 
   return (
 
@@ -92,7 +103,16 @@ export default function Navbar() {
       </div>
 
       {/* Right Section */}
-      <UserAvatar />
+      <div className="flex items-center gap-3">
+        <UserAvatar />
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          title="Logout"
+        >
+          <LogOut size={18} />
+        </button>
+      </div>
 
     </header>
 

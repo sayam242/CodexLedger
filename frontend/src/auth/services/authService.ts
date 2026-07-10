@@ -1,7 +1,7 @@
 import {
   GoogleAuthProvider,
   signInWithPopup,
-  signOut,
+  signOut as firebaseSignOut,
 } from "firebase/auth";
 
 import type {
@@ -60,6 +60,15 @@ Promise<User> {
 
   return user;
 
+}
+
+export async function signOut(): Promise<void> {
+  try {
+    await firebaseSignOut(auth);
+  } catch (error) {
+    console.error("Firebase sign out error:", error);
+    throw error;
+  }
 }
 
 

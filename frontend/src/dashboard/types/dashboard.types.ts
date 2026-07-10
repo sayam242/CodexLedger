@@ -36,10 +36,6 @@ export interface DashboardFilters {
     status: SubmissionStatus | "All";
 }
 
-interface FilterBarProps {
-    filters: DashboardFilters;
-}
-
 export type SubmissionStatus =
     | "Accepted"
     | "Wrong Answer"
@@ -81,4 +77,25 @@ export interface RecentProblem {
         language: string;
         submittedAt: string;
     } | null;
+}
+
+export interface StrugglingProblem {
+    problemId: string;
+    title: string;
+    difficulty: string;
+    rejectionCount: number;
+}
+
+export interface SubmissionTimelineItem {
+    submissionId: string;
+    problemTitle: string;
+    problemId: string;
+    status: string;
+    language: string;
+    submittedAt: string;
+}
+
+export interface DashboardStrugglingResponse {
+    strugglingProblems: StrugglingProblem[];
+    recentSubmissions: SubmissionTimelineItem[];
 }

@@ -5,7 +5,7 @@ export default function PrivacyPolicyPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex flex-col">
+        <div className="bg-gradient-to-br from-background via-background to-muted min-h-screen">
             {/* Header */}
             <header className="py-6 px-6 border-t border-border">
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
             </header>
 
             {/* Content */}
-            <main className="flex-1 py-12 px-6">
+            <main className="py-12 px-6">
                 <div className="max-w-4xl mx-auto prose prose-neutral dark:prose-invert">
                     <h1>Privacy Policy</h1>
                     <p className="text-sm text-muted-foreground">Last Updated: July 11, 2026</p>

@@ -27,7 +27,7 @@ export function useExplanation(problemId: string): UseExplanationReturn {
         const response = await fetchExplanation(problemId);
         const mapped = mapExplanation(response);
 
-        setExplanation(mapped.explanation);
+        setExplanation(mapped.status === "PROCESSING" ? null : mapped.explanation);
         setStatus(mapped.status);
         setLoading(false);
         setError(null);

@@ -172,7 +172,8 @@ export async function findStrugglingProblems(userId: string, limit: number) {
             difficulty: problem.difficulty,
             totalSubmissions,
             acceptedSubmissions,
-            acceptanceRate
+            acceptanceRate,
+            updatedAt: problem.updatedAt
         };
     });
 
@@ -180,7 +181,7 @@ export async function findStrugglingProblems(userId: string, limit: number) {
         if (a.acceptanceRate !== b.acceptanceRate) {
             return a.acceptanceRate - b.acceptanceRate;
         }
-        return b.totalSubmissions - a.totalSubmissions;
+        return b.updatedAt.getTime() - a.updatedAt.getTime();
     });
 
     return struggling.slice(0, limit);

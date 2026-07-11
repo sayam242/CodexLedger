@@ -93,7 +93,7 @@ export default function ExplanationContent({
   status,
   loading,
 }: ExplanationContentProps) {
-  if (loading && status === "PROCESSING") {
+  if (status === "PROCESSING") {
     return <GeneratingState />;
   }
 
@@ -125,7 +125,7 @@ export default function ExplanationContent({
 
       <ExplanationSection title="Dry Runs">
         <div className="space-y-3">
-          {explanation.dryRuns.map((dryRun, idx) => (
+          {explanation.dryRuns?.map((dryRun, idx) => (
             <DryRunCard key={idx} dryRun={dryRun} index={idx} />
           ))}
         </div>
@@ -133,7 +133,7 @@ export default function ExplanationContent({
 
       <ExplanationSection title="Edge Cases">
         <div className="space-y-3">
-          {explanation.edgeCases.map((edgeCase, idx) => (
+          {explanation.edgeCases?.map((edgeCase, idx) => (
             <EdgeCaseCard key={idx} edgeCase={edgeCase} />
           ))}
         </div>
@@ -141,7 +141,7 @@ export default function ExplanationContent({
 
       <ExplanationSection title="Common Misunderstandings">
         <div className="space-y-3">
-          {explanation.commonMisunderstandings.map((item, idx) => (
+          {explanation.commonMisunderstandings?.map((item, idx) => (
             <div
               key={idx}
               className="
@@ -177,7 +177,7 @@ export default function ExplanationContent({
 
       <ExplanationSection title="Key Observations">
         <div className="space-y-2">
-          {explanation.keyObservations.map((item, idx) => (
+          {explanation.keyObservations?.map((item, idx) => (
             <div key={idx} className="text-xs">
               <p className="font-medium text-gray-800">{item.observation}</p>
               <p className="text-gray-600 mt-0.5">{item.whyItMatters}</p>
@@ -188,7 +188,7 @@ export default function ExplanationContent({
 
       <ExplanationSection title="Important Notes">
         <ul className="list-disc list-inside space-y-1">
-          {explanation.importantNotes.map((item, idx) => (
+          {explanation.importantNotes?.map((item, idx) => (
             <li key={idx} className="text-xs text-gray-700">
               {item.note}
             </li>

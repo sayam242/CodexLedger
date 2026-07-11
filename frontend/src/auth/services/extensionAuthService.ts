@@ -17,7 +17,7 @@ export async function sendTokenToExtension(
 
   chrome.runtime.sendMessage(
 
-    "cimlcfmopngdhodadhebdmdjjmmbgddf",
+    import.meta.env.VITE_EXTENSION_ID,
 
     {
 
@@ -27,7 +27,7 @@ export async function sendTokenToExtension(
 
     },
 
-    (response) => {
+    (response:any) => {
 
       console.log(
         response

@@ -40,7 +40,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://leetcode.com",
-      "chrome-extension://cimlcfmopngdhodadhebdmdjjmmbgddf"
+      `chrome-extension://${process.env.EXTENSION_ID}`
     ],
     credentials: true
   })

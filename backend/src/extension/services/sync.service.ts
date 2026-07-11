@@ -39,7 +39,6 @@ export async function saveProblem(
       }
   
     });
-    console.log(savedProblem);
     savedProblemId = savedProblem.id;
   
     await tx.problemContent.upsert({

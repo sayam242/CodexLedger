@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 import {loginUser,getCurrentUser} from "../services/auth.service";
-import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 
 
@@ -18,7 +17,7 @@ export async function login(
     {
         httpOnly: true,
         sameSite:"lax",
-        secure: false,
+        secure: process.env.NODE_ENV === "production",
         maxAge: 30 * 24 * 60 * 60 * 1000,
     }
   );
@@ -56,7 +55,7 @@ export async function refreshToken(
   res: Response
 ) {
   console.log("Refresh token endpoint hit");
-  console.log("Cookies received:", req.cookies);
+  
   const sessionToken =
     req.cookies.codexLedger_session;
 
@@ -64,7 +63,7 @@ export async function refreshToken(
     await getCurrentUser(
       sessionToken
     );
-  console.log("User from refresh token:", user);
+  
   if (!user) {
 
     return res
@@ -89,7 +88,6 @@ export async function refreshToken(
       }
 
     );
-  console.log("New token generated:", token);
   return res
     .status(200)
     .json({

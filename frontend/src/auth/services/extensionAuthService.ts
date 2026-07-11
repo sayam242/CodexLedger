@@ -1,33 +1,23 @@
 export async function sendTokenToExtension(
   token: string
 ) {
-  if (
-    typeof chrome === "undefined" ||
-    !chrome.runtime
-  ) {
+  try {
+    if (
+      typeof chrome === "undefined" ||
+      !chrome.runtime ||
+      !chrome.runtime.sendMessage
+    ) {
+      return;
+    }
 
-    console.log(
-      "Extension not installed"
+    chrome.runtime.sendMessage(
+      import.meta.env.VITE_EXTENSION_ID,
+      {
+        type: "LOGIN_SUCCESS",
+        token
+      }
     );
-
-    return;
-
+  } catch {
+    // Extension not installed or not accessible
   }
-
-  chrome.runtime.sendMessage(
-
-    import.meta.env.VITE_EXTENSION_ID,
-
-    {
-
-      type: "LOGIN_SUCCESS",
-
-      token
-
-    },
-
-
-
-  );
-
 }

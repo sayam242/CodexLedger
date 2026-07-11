@@ -7,9 +7,7 @@ import { loginUser } from "../../api/auth.api";
 import { sendTokenToExtension } from "../services/extensionAuthService";
 
 export default function ConnectExtensionPage() {
-console.log(
-    "ConnectExtensionPage rendered"
-  );
+
 
 const navigate = useNavigate();
 
@@ -19,7 +17,6 @@ useState(
 );
 
 useEffect(() => {
-console.log("ConnectExtensionPage mounted, checking auth state...");
 const unsubscribe =
   onAuthStateChanged(
 

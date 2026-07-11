@@ -1,7 +1,6 @@
 export async function sendTokenToExtension(
   token: string
 ) {
-  console.log("Sending token:", token);
   if (
     typeof chrome === "undefined" ||
     !chrome.runtime
@@ -29,12 +28,8 @@ export async function sendTokenToExtension(
 
     (response:any) => {
 
-      console.log(
-        response
-      );
-    console.log(
-      chrome.runtime.lastError
-    );
+      
+    
     }
 
   );

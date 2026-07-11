@@ -36,7 +36,7 @@ export async function saveNote(
   problemId: string,
   data: SaveNoteRequest
 ): Promise<void> {
-  console.log("called")
+ 
   const response = await fetch(
     `${API_BASE_URL}/api/problems/${problemId}/note`,
     {

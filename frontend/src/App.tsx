@@ -14,6 +14,7 @@ import ProblemsPage from "./problems/pages/ProblemsPage";
 import ProblemDetailPage from "./detailedProblem/pages/ProblemDetailPage";
 import LandingPage from "./landing/pages/LandingPage";
 import NotFoundPage from "./shared/components/NotFoundPage";
+import PrivacyPolicyPage from "./shared/pages/PrivacyPolicyPage";
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
           </Route>
+
+          {/* Public static pages - accessible to everyone */}
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
           {/* Semi-public route - accessible to everyone */}
           <Route path="/connect-extension" element={<ConnectExtensionPage />} />

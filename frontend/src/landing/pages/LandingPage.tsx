@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
     Code,
     BarChart3,
@@ -330,7 +330,7 @@ export default function LandingPage() {
                         Built with passion for the coding community.
                     </p>
                     <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+                        <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
                         <a href="#" className="hover:text-foreground transition-colors">Terms</a>
                         <a href="#" className="hover:text-foreground transition-colors">Contact</a>
                     </div>

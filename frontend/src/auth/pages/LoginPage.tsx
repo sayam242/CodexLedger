@@ -3,7 +3,7 @@ import { signInWithGoogle } from "../services/authService";
 import { useAuthContext } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage() {
   const { setLoginInProgress } = useAuthContext();
@@ -73,9 +73,9 @@ export default function LoginPage() {
                 Terms
               </span>{" "}
               &{" "}
-              <span className="underline underline-offset-2 cursor-pointer hover:text-foreground transition-colors">
+              <Link to="/privacy" className="underline underline-offset-2 cursor-pointer hover:text-foreground transition-colors">
                 Privacy Policy
-              </span>
+              </Link>
             </p>
           </CardContent>
         </Card>

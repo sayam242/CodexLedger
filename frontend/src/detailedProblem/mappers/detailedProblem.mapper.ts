@@ -2,7 +2,9 @@ import type {
 
   Problem,
 
-  Submission
+  Submission,
+
+  ProblemExplanation
 
 } from "../types/detailedProblem.types";
 
@@ -12,7 +14,9 @@ import type {
 
   SubmissionDetailResponse,
 
-  ComplexityAnalysisResponse
+  ComplexityAnalysisResponse,
+
+  ExplanationApiResponse
 
 } from "../types/api.types";
 
@@ -176,5 +180,17 @@ export function mapComplexityAnalysis(
     complexityReasoning: response.reasoning,
     complexityAnalysisStatus: response.analysisStatus,
     complexityQuizCompleted: response.quizCompleted,
+  };
+}
+
+export function mapExplanation(
+  response: ExplanationApiResponse
+): {
+  explanation: ProblemExplanation | null;
+  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+} {
+  return {
+    explanation: response.data.explanation as ProblemExplanation | null,
+    status: response.data.analysisStatus,
   };
 }

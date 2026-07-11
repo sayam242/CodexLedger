@@ -1,5 +1,5 @@
 import { apiFetch, apiPost } from '@/shared/services/apiClient';
-import type{ProblemDetailResponse,SubmissionDetailResponse,ComplexityAnalysisResponse,ComplexityQuizAnswerResponse} from "../types/api.types";
+import type{ProblemDetailResponse,SubmissionDetailResponse,ComplexityAnalysisResponse,ComplexityQuizAnswerResponse,ExplanationApiResponse} from "../types/api.types";
 
 
 /**
@@ -64,5 +64,13 @@ export function markQuizCompleted(
 ): Promise<ComplexityQuizAnswerResponse> {
   return apiPost<ComplexityQuizAnswerResponse>(
     `/api/ai/complexity/${submissionId}/quiz-complete`
+  );
+}
+
+export function fetchExplanation(
+  problemId: string
+): Promise<ExplanationApiResponse> {
+  return apiFetch<ExplanationApiResponse>(
+    `/api/ai/explanation/${problemId}`
   );
 }

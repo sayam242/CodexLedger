@@ -1,6 +1,7 @@
 import { useProblem } from './useProblem';
 import { useSubmission } from './useSubmission';
 import {useProblemNotes} from "./useProblemNotes";
+import { useExplanation } from './useExplanation';
 export function useProblemDetail(problemId: string) {
 
     const {
@@ -38,6 +39,13 @@ export function useProblemDetail(problemId: string) {
         error: noteError
     } = useProblemNotes(problemId);
 
+    const {
+        explanation,
+        status: explanationStatus,
+        loading: explanationLoading,
+        error: explanationError
+    } = useExplanation(problemId);
+
     return {
 
         problem,
@@ -49,6 +57,10 @@ export function useProblemDetail(problemId: string) {
         selectedSubmissionId,
         
         note,
+
+        explanation,
+
+        explanationStatus,
 
         loading,
 

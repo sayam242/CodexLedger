@@ -91,3 +91,46 @@ export interface SubmissionDetailResponse {
   errorMessage?: string;
 
 }
+
+export interface ExplanationApiResponse {
+  success: boolean;
+  data: {
+    problemId: string;
+    explanation: {
+      overview: string;
+      inputExplanation: string;
+      outputExplanation: string;
+      realWorldAnalogy: string;
+      dryRuns: Array<{
+        title: string;
+        steps: Array<{
+          step: number;
+          description: string;
+          input: string;
+          output: string;
+        }>;
+        finalOutput: string;
+      }>;
+      edgeCases: Array<{
+        name: string;
+        description: string;
+        input: string;
+        expectedBehavior: string;
+      }>;
+      commonMisunderstandings: Array<{
+        misunderstanding: string;
+        clarification: string;
+      }>;
+      keyObservations: Array<{
+        observation: string;
+        whyItMatters: string;
+      }>;
+      importantNotes: Array<{
+        note: string;
+      }>;
+    } | null;
+    analysisStatus: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
+    version: number | null;
+    generatedAt: string | null;
+  };
+}

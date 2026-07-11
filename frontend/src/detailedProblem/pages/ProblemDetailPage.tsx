@@ -27,6 +27,8 @@ export default function ProblemDetailPage() {
     selectedSubmission,
     selectedSubmissionId,
     note,
+    explanation,
+    explanationStatus,
     loading,
     error,
     selectSubmission
@@ -85,6 +87,9 @@ export default function ProblemDetailPage() {
           selectedSubmissionId={selectedSubmissionId}
           onSubmissionSelect={selectSubmission}
           note={note}
+          explanation={explanation}
+          explanationStatus={explanationStatus}
+          explanationLoading={loading}
         />
 
         <RightPanel

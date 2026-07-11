@@ -2,16 +2,20 @@ import { useState } from "react";
 
 import { Card } from "@/components/ui/card";
 
-import type {Problem, Submission, NoteResponse} from "../../types/detailedProblem.types";
+import type {Problem, Submission, NoteResponse, ProblemExplanation, AIAnalysisStatus} from "../../types/detailedProblem.types";
 
 import SubmissionTimeline from "../submission/SubmissionTimeline";
 import NotesEditor from "@/detailedProblem/notes/components/NotesEditor";
+import ExplanationContent from "../explanation/ExplanationContent";
 
 interface ProblemDescriptionProps {
   problem: Problem;
   submissions: Submission[];
   selectedSubmissionId: string;
   note: NoteResponse;
+  explanation: ProblemExplanation | null;
+  explanationStatus: AIAnalysisStatus;
+  explanationLoading: boolean;
   onSubmissionSelect: (submissionId: string) => void;
 }
 
@@ -61,6 +65,9 @@ export default function ProblemDescription({
   submissions,
   selectedSubmissionId,
   note,
+  explanation,
+  explanationStatus,
+  explanationLoading,
   onSubmissionSelect
 }: ProblemDescriptionProps) {
 
@@ -312,11 +319,13 @@ export default function ProblemDescription({
 
             activeTab === "explanation" && (
 
-              <PlaceholderContent
+              <ExplanationContent
 
-                message="
-                  Detailed explanation not available
-                "
+                explanation={explanation}
+
+                status={explanationStatus}
+
+                loading={explanationLoading}
 
               />
 

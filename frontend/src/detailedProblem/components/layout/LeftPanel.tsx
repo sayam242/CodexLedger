@@ -1,7 +1,7 @@
 import ProblemDescription from "@/detailedProblem/components/problem/ProblemDescription";
 import ProblemHeader from "@/detailedProblem/components/problem/ProblemHeader";
 import SubmissionTimeline from "@/detailedProblem/components/submission/SubmissionTimeline";
-import type{ Problem, Submission,NoteResponse} from "@/detailedProblem/types/detailedProblem.types";
+import type{ Problem, Submission, NoteResponse, ProblemExplanation, AIAnalysisStatus} from "@/detailedProblem/types/detailedProblem.types";
 
 
 
@@ -11,6 +11,9 @@ interface LeftPanelProps {
   submissions: Submission[];
   selectedSubmissionId: string;
   note: NoteResponse;
+  explanation: ProblemExplanation | null;
+  explanationStatus: AIAnalysisStatus;
+  explanationLoading: boolean;
   onSubmissionSelect: (submissionId: string) => void;
 }
 
@@ -19,6 +22,9 @@ export default function LeftPanel({
   submissions,
   selectedSubmissionId,
   note,
+  explanation,
+  explanationStatus,
+  explanationLoading,
   onSubmissionSelect
 }: LeftPanelProps) {
   return (
@@ -49,6 +55,9 @@ export default function LeftPanel({
           submissions={submissions}
           selectedSubmissionId={selectedSubmissionId}
           note={note}
+          explanation={explanation}
+          explanationStatus={explanationStatus}
+          explanationLoading={explanationLoading}
           onSubmissionSelect={onSubmissionSelect}
         />
       </div>

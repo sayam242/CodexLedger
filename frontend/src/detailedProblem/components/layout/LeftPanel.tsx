@@ -1,6 +1,6 @@
 import ProblemDescription from "@/detailedProblem/components/problem/ProblemDescription";
 import ProblemHeader from "@/detailedProblem/components/problem/ProblemHeader";
-import SubmissionTimeline from "@/detailedProblem/components/submission/SubmissionTimeline";
+
 import type{ Problem, Submission, NoteResponse, ProblemExplanation, AIAnalysisStatus} from "@/detailedProblem/types/detailedProblem.types";
 
 

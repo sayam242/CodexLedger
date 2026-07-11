@@ -91,7 +91,7 @@ export default function SolvedTrendsChart({ data, loading = false }: SolvedTrend
                             />
                             <YAxis allowDecimals={false} />
                             <Tooltip
-                                formatter={(value: number) => [`${value} problems`, "Solved"]}
+                                formatter={(value) => [`${value} problems`, "Solved"]}
                                 labelFormatter={(label) => `Week: ${label}`}
                                 contentStyle={{
                                     borderRadius: "8px",

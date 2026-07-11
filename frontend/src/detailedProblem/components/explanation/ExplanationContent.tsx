@@ -91,7 +91,6 @@ function EmptyState() {
 export default function ExplanationContent({
   explanation,
   status,
-  loading,
 }: ExplanationContentProps) {
   if (status === "PROCESSING") {
     return <GeneratingState />;

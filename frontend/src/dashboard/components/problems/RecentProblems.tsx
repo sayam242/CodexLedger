@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import type { ProblemCardData } from "../../types/dashboard.types";
-import { formatDate } from "@/shared/utils/formatDate";
+
 import { cn } from "@/lib/utils";
 
 interface RecentProblemsProps {

@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+
 import type { Submission } from '@/detailedProblem/types/detailedProblem.types';
 import { getStatusBadgeVariant } from '@/shared/utils/getStatusBadgeVarient';
 import { formatDate } from '@/shared/utils/formatDate';

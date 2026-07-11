@@ -87,7 +87,7 @@ export default function TopicDistributionChart({ data, loading = false }: TopicD
                                 tick={{ fontSize: 12 }}
                             />
                             <Tooltip
-                                formatter={(value: number) => [`${value} problems`, "Count"]}
+                                formatter={(value) => [`${value} problems`, "Count"]}
                             />
                             <Bar
                                 dataKey="count"

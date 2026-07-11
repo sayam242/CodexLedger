@@ -9,7 +9,7 @@ import {
     TrendingUp,
     Download,
     ChevronRight,
-    CheckCircle,
+
     ArrowRight,
     Sparkles,
     Brain,
@@ -204,7 +204,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {FEATURES.map((feature, index) => {
+                        {FEATURES.map((feature) => {
                             const Icon = feature.icon;
                             return (
                                 <div

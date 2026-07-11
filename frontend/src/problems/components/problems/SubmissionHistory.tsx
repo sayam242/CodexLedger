@@ -66,7 +66,7 @@ export default function SubmissionHistory({
       <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-gray-200" />
 
       <div className="space-y-0">
-        {submissions.map((submission, index) => (
+        {submissions.map((submission) => (
           <div
             key={submission.submissionId}
             className="relative flex items-start gap-4 py-2 cursor-pointer group"

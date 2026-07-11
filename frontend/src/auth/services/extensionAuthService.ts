@@ -26,11 +26,7 @@ export async function sendTokenToExtension(
 
     },
 
-    (response:any) => {
 
-      
-    
-    }
 
   );
 

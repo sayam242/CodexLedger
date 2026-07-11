@@ -193,9 +193,9 @@ export default function DifficultyBreakdownChart({
                                         ))}
                                     </Pie>
                                     <Tooltip
-                                        formatter={(value: number, name: string) => [
+                                        formatter={(value) => [
                                             `${value} problems`,
-                                            name
+                                            ""
                                         ]}
                                         contentStyle={{
                                             borderRadius: "8px",

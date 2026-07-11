@@ -1,5 +1,4 @@
 import {
-  BarChart3,
   Code,
   FileCode2,
   LayoutDashboard,

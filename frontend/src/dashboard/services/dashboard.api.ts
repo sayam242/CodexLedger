@@ -2,8 +2,7 @@ import type {
     DashboardStats,
     ProblemCardData,
     DashboardActivityResponse,
-    StrugglingProblem,
-    SubmissionTimelineItem
+    StrugglingProblem
 } from "../types/dashboard.types";
 import { apiFetch } from "@/shared/services/apiClient";
 

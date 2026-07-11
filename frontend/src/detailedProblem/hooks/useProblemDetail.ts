@@ -35,15 +35,11 @@ export function useProblemDetail(problemId: string) {
 
     const {
         note,
-        loading: noteLoading,
-        error: noteError
     } = useProblemNotes(problemId);
 
     const {
         explanation,
         status: explanationStatus,
-        loading: explanationLoading,
-        error: explanationError
     } = useExplanation(problemId);
 
     return {

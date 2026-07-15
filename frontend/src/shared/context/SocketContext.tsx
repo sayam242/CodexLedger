@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { connectSocket, getSocket, disconnectSocket } from "../../lib/socket";
+import { connectSocket, disconnectSocket } from "../../lib/socket";
 import { useAuthContext } from "../../auth/context/AuthContext";
 import type { Socket } from "socket.io-client";
 

@@ -1,5 +1,7 @@
+import { useCallback } from "react";
 import AppLayout from "@/shared/layout/AppLayout";
 import LoadingPage from "@/shared/components/LoadingPage";
+import { useSocketEvent } from "@/hooks/useSocketEvent";
 
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useDashboardActivity } from "../hooks/useDashboardActivity";
@@ -17,14 +19,26 @@ import RecentProblems from "../components/problems/RecentProblems";
 import { HeatmapSkeleton } from "../components/ui/Skeleton";
 
 export default function DashboardPage() {
-    const { stats, loading: statsLoading } = useDashboardStats();
-    const { activity, loading: activityLoading } = useDashboardActivity();
-    const { problems, loading: problemsLoading } = useRecentProblems(5);
-    const { problems: strugglingProblems, loading: strugglingLoading } = useStrugglingProblems();
+    const { stats, loading: statsInitialLoad, refetch: refetchStats } = useDashboardStats();
+    const { activity, loading: activityInitialLoad, refetch: refetchActivity } = useDashboardActivity();
+    const { problems, loading: problemsInitialLoad, refetch: refetchProblems } = useRecentProblems(5);
+    const { problems: strugglingProblems, loading: strugglingLoading, refetch: refetchStruggling } = useStrugglingProblems();
 
-    const isLoading = statsLoading || activityLoading || problemsLoading;
+    const refetchAll = useCallback(() => {
+        refetchStats();
+        refetchActivity();
+        refetchProblems();
+        refetchStruggling();
+    }, [refetchStats, refetchActivity, refetchProblems, refetchStruggling]);
 
-    if (isLoading) {
+    useSocketEvent("dashboard:updated", refetchAll);
+    useSocketEvent("problem:synced", refetchAll);
+    useSocketEvent("complexity:completed", refetchStats);
+    useSocketEvent("explanation:completed", refetchStats);
+
+    const isInitialLoad = statsInitialLoad || activityInitialLoad || problemsInitialLoad;
+
+    if (isInitialLoad) {
         return (
             <AppLayout>
                 <LoadingPage />
@@ -40,7 +54,7 @@ export default function DashboardPage() {
                 {stats && <StatsCards stats={stats} />}
 
                 {/* Row 2: Submission Stats */}
-                <SubmissionStatsRow stats={stats} loading={statsLoading} />
+                <SubmissionStatsRow stats={stats} loading={statsInitialLoad} />
 
                 {/* Row 3: Heatmap - Full Width */}
                 {activity ? (
@@ -51,7 +65,7 @@ export default function DashboardPage() {
 
                 {/* Row 4: Difficulty Breakdown + Struggling Problems */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <DifficultyBreakdownChart stats={stats} loading={statsLoading} />
+                    <DifficultyBreakdownChart stats={stats} loading={statsInitialLoad} />
                     <StrugglingProblemsChart
                         problems={strugglingProblems}
                         loading={strugglingLoading}
@@ -62,11 +76,11 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <SolvedTrendsChart
                         data={activity?.weeklyTrends || []}
-                        loading={activityLoading}
+                        loading={activityInitialLoad}
                     />
                     <TopicDistributionChart
                         data={activity?.topicDistribution || []}
-                        loading={activityLoading}
+                        loading={activityInitialLoad}
                     />
                 </div>
 

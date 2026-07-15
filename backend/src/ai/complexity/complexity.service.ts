@@ -4,6 +4,7 @@ import { openai, AI_MODEL } from "../shared/aiClient";
 import { ComplexityAnalysisResult } from "./types/complexity.types";
 import { ComplexityResponseDto } from "./dto/complexity.dto";
 import { buildComplexityPrompt } from "./prompts/complexityPrompt";
+import { emitToUser } from "../../lib/socketManager";
 
 function validateAnalysisResult(data: unknown): data is ComplexityAnalysisResult {
   if (typeof data !== "object" || data === null) return false;
@@ -96,13 +97,24 @@ async function runAIAnalysis(submissionId: string) {
         complexityGeneratedAt: new Date(),
       },
     });
+
+    emitToUser(submission.problem.userId, "complexity:completed", { submissionId });
   } catch (error) {
     console.error("AI Analysis failed:", error);
     try {
+      const failedSubmission = await prisma.submission.findUnique({
+        where: { id: submissionId },
+        select: { problem: { select: { userId: true } } },
+      });
+
       await prisma.submission.update({
         where: { id: submissionId },
         data: { complexityAnalysisStatus: AIAnalysisStatus.FAILED },
       });
+
+      if (failedSubmission) {
+        emitToUser(failedSubmission.problem.userId, "complexity:failed", { submissionId });
+      }
     } catch (updateError) {
       console.error("CRITICAL: Failed to set FAILED status:", updateError);
     }

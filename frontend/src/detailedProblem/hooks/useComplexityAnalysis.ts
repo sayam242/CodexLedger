@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { fetchComplexityAnalysis, markQuizCompleted } from "../services/detailedProblem.api";
+import { getSocket } from "@/lib/socket";
 import type { Submission, AIAnalysisStatus } from "../types/detailedProblem.types";
 
 interface UseComplexityAnalysisReturn {
@@ -60,23 +61,56 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
     }
   }, [submission]);
 
-  useEffect(() => {
-    if (!submission) {
-      return;
-    }
+  const loadAnalysis = useCallback(async () => {
+    if (!submission) return;
 
-    // Update local state from submission data
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchComplexityAnalysis(submission.id);
+
+      setComplexityStatus(response.analysisStatus);
+      setQuizCompleted(response.quizCompleted);
+      setTimeComplexity(response.timeComplexity);
+      setSpaceComplexity(response.spaceComplexity);
+
+      if (response.analysisStatus === "COMPLETED") {
+        setComplexityData({
+          timeComplexityOptions: response.timeComplexityOptions,
+          spaceComplexityOptions: response.spaceComplexityOptions,
+          reasoning: response.reasoning,
+          correctTimeComplexity: response.timeComplexity,
+          correctSpaceComplexity: response.spaceComplexity,
+        });
+
+        if (!response.quizCompleted) {
+          setShowPopup(true);
+        }
+      }
+
+      if (response.analysisStatus === "FAILED") {
+        setError("AI analysis failed");
+      }
+    } catch (err) {
+      setError("Failed to fetch complexity analysis");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [submission]);
+
+  useEffect(() => {
+    if (!submission) return;
+
     setComplexityStatus(submission.complexityAnalysisStatus);
     setQuizCompleted(submission.complexityQuizCompleted);
     setTimeComplexity(submission.timeComplexity);
     setSpaceComplexity(submission.spaceComplexity);
 
-    // Case 1: Already completed with quiz done - no popup needed
     if (submission.complexityAnalysisStatus === "COMPLETED" && submission.complexityQuizCompleted) {
       return;
     }
 
-    // Case 2: Completed but quiz not done - prepare data for popup
     if (submission.complexityAnalysisStatus === "COMPLETED" && !submission.complexityQuizCompleted) {
       if (submission.timeComplexityOptions && submission.spaceComplexityOptions) {
         setComplexityData({
@@ -90,68 +124,37 @@ export function useComplexityAnalysis(submission: Submission | null): UseComplex
       return;
     }
 
-    // Case 3: Not completed - trigger analysis
     if (submission.complexityAnalysisStatus === "PENDING" || submission.complexityAnalysisStatus === "FAILED") {
-      const pollInterval = 3000;
-      const maxPollTime = 180000;
-      const startTime = Date.now();
-      let timeoutId: ReturnType<typeof setTimeout>;
-
-      const pollAnalysis = async () => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-          const response = await fetchComplexityAnalysis(submission.id);
-          
-          setComplexityStatus(response.analysisStatus);
-          setQuizCompleted(response.quizCompleted);
-          setTimeComplexity(response.timeComplexity);
-          setSpaceComplexity(response.spaceComplexity);
-
-          if (response.analysisStatus === "COMPLETED") {
-            setComplexityData({
-              timeComplexityOptions: response.timeComplexityOptions,
-              spaceComplexityOptions: response.spaceComplexityOptions,
-              reasoning: response.reasoning,
-              correctTimeComplexity: response.timeComplexity,
-              correctSpaceComplexity: response.spaceComplexity,
-            });
-            
-            if (!response.quizCompleted) {
-              setShowPopup(true);
-            }
-            setIsLoading(false);
-            return;
-          }
-
-          if (response.analysisStatus === "FAILED") {
-            setError("AI analysis failed");
-            setIsLoading(false);
-            return;
-          }
-
-          if (Date.now() - startTime < maxPollTime) {
-            timeoutId = setTimeout(pollAnalysis, pollInterval);
-          } else {
-            setError("Analysis timed out");
-            setIsLoading(false);
-          }
-        } catch (err) {
-          if (Date.now() - startTime < maxPollTime) {
-            timeoutId = setTimeout(pollAnalysis, pollInterval);
-          } else {
-            setError("Analysis timed out");
-            setIsLoading(false);
-          }
-        }
-      };
-
-      pollAnalysis();
-
-      return () => clearTimeout(timeoutId);
+      loadAnalysis();
     }
-  }, [submission]);
+  }, [submission, loadAnalysis]);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket || !submission) return;
+
+    const onComplexityCompleted = (data: { submissionId: string }) => {
+      if (data.submissionId === submission.id) {
+        loadAnalysis();
+      }
+    };
+
+    const onComplexityFailed = (data: { submissionId: string }) => {
+      if (data.submissionId === submission.id) {
+        setComplexityStatus("FAILED");
+        setIsLoading(false);
+        setError("AI analysis failed");
+      }
+    };
+
+    socket.on("complexity:completed", onComplexityCompleted);
+    socket.on("complexity:failed", onComplexityFailed);
+
+    return () => {
+      socket.off("complexity:completed", onComplexityCompleted);
+      socket.off("complexity:failed", onComplexityFailed);
+    };
+  }, [submission, loadAnalysis]);
 
   return {
     showPopup,

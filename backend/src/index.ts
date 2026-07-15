@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors";
 import dotenv from "dotenv";
+import http from "http";
 
 
 /**
@@ -16,6 +17,7 @@ import aiRoutes from "./ai/complexity/complexity.routes";
 import explanationRoutes from "./ai/explanation/explanation.routes";
 import { startExplanationWorker } from "./ai/explanation/worker";
 import cookieParser from "cookie-parser";
+import { initSocketManager } from "./lib/socketManager";
 
 // Initialize environment variables
 dotenv.config();
@@ -23,13 +25,10 @@ dotenv.config();
 // Initialize Express app
 const app=express();
 
-
-
 // Health check endpoint
 app.get("/health",(req,res)=>{
     res.json({status:"ok"});
 });
-
 
 // Use cookie parser middleware
 app.use(cookieParser());
@@ -56,9 +55,14 @@ app.use("/api/problems", problemRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/ai", explanationRoutes);
 
+// Create HTTP server and initialize Socket.IO
+const httpServer = http.createServer(app);
+initSocketManager(httpServer);
+
 startExplanationWorker();
 
 // Start the server
-app.listen(process.env.PORT || 5000,()=>{
-    console.log(`Server is running on port ${process.env.PORT}`);
+const PORT = process.env.PORT || 5000;
+httpServer.listen(PORT,()=>{
+    console.log(`Server is running on port ${PORT}`);
 });

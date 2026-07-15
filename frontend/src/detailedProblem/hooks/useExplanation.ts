@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { fetchExplanation } from "../services/detailedProblem.api";
 import { mapExplanation } from "../mappers/detailedProblem.mapper";
+import { getSocket } from "@/lib/socket";
 import type { ProblemExplanation, AIAnalysisStatus } from "../types/detailedProblem.types";
 
 interface UseExplanationReturn {
@@ -16,39 +17,51 @@ export function useExplanation(problemId: string): UseExplanationReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadExplanation = useCallback(async () => {
+    try {
+      const response = await fetchExplanation(problemId);
+      const mapped = mapExplanation(response);
+
+      setExplanation(mapped.status === "PROCESSING" ? null : mapped.explanation);
+      setStatus(mapped.status);
+      setLoading(false);
+      setError(null);
+    } catch (err) {
+      setError("Failed to load explanation");
+      setLoading(false);
+    }
+  }, [problemId]);
+
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    const pollInterval = 3000;
-    const maxPollTime = 180000;
-    const startTime = Date.now();
+    loadExplanation();
+  }, [loadExplanation]);
 
-    const fetchAndTrack = async () => {
-      try {
-        const response = await fetchExplanation(problemId);
-        const mapped = mapExplanation(response);
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
 
-        setExplanation(mapped.status === "PROCESSING" ? null : mapped.explanation);
-        setStatus(mapped.status);
-        setLoading(false);
-        setError(null);
-
-        if (mapped.status === "PROCESSING" && Date.now() - startTime < maxPollTime) {
-          timeoutId = setTimeout(fetchAndTrack, pollInterval);
-        }
-      } catch (err) {
-        if (Date.now() - startTime < maxPollTime) {
-          timeoutId = setTimeout(fetchAndTrack, pollInterval);
-        } else {
-          setError("Failed to load explanation");
-          setLoading(false);
-        }
+    const onExplanationCompleted = (data: { problemId: string }) => {
+      if (data.problemId === problemId) {
+        loadExplanation();
       }
     };
 
-    fetchAndTrack();
+    const onExplanationFailed = (data: { problemId: string }) => {
+      if (data.problemId === problemId) {
+        setStatus("FAILED");
+        setLoading(false);
+        setError("Explanation generation failed");
+      }
+    };
 
-    return () => clearTimeout(timeoutId);
-  }, [problemId]);
+    socket.on("explanation:completed", onExplanationCompleted);
+    socket.on("explanation:failed", onExplanationFailed);
+
+    return () => {
+      socket.off("explanation:completed", onExplanationCompleted);
+      socket.off("explanation:failed", onExplanationFailed);
+    };
+  }, [problemId, loadExplanation]);
 
   return { explanation, status, loading, error };
 }

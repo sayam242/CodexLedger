@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 
 import { AuthProvider } from "./auth/context/AuthContext";
+import { SocketProvider } from "./shared/context/SocketContext";
 import { ProtectedRoute, PublicRoute } from "./auth/components/ProtectedRoute";
 
 import LoginPage from "./auth/pages/LoginPage";
@@ -19,7 +20,8 @@ import PrivacyPolicyPage from "./shared/pages/PrivacyPolicyPage";
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <SocketProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public routes - accessible only when NOT logged in */}
           <Route element={<PublicRoute />}>
@@ -44,6 +46,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
+      </SocketProvider>
     </AuthProvider>
   );
 }

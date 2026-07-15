@@ -1,5 +1,6 @@
 import AppLayout from "@/shared/layout/AppLayout";
 import LoadingPage from "@/shared/components/LoadingPage";
+import { useSocketEvent } from "@/hooks/useSocketEvent";
 
 import DashboardHeader from "../components/header/DashboardHeader";
 import FilterBar from "../components/filters/FilterBar";
@@ -19,14 +20,18 @@ export default function ProblemsPage() {
     hasActiveFilters,
   } = useProblemFilters();
 
-  const { problems, loading, loadingMore, error, hasMore, loadMore, total } = useDashboardProblems({
+  const { problems, loading: problemsInitialLoad, loadingMore, error, hasMore, loadMore, total, refetch } = useDashboardProblems({
     ...filters,
     search: debouncedSearch,
   });
 
-  const { stats, loading: statsLoading } = useDashboardStats();
+  const { stats, loading: statsInitialLoad, refetch: refetchStats } = useDashboardStats();
 
-  if (loading || statsLoading) {
+  useSocketEvent("problem:synced", refetch);
+  useSocketEvent("dashboard:updated", refetch);
+  useSocketEvent("dashboard:updated", refetchStats);
+
+  if (problemsInitialLoad || statsInitialLoad) {
     return (
       <AppLayout>
         <LoadingPage />

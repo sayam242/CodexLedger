@@ -6,6 +6,7 @@ import { ExplanationJobData } from "./types";
 import { buildExplanationContext } from "./context-builder";
 import { buildExplanationPrompt } from "./prompt";
 import { validateExplanation } from "./schema";
+import { emitToUser } from "../../lib/socketManager";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
@@ -75,6 +76,14 @@ async function processExplanationJob(job: Job<ExplanationJobData>) {
       },
     });
 
+    const completedProblem = await prisma.problem.findUnique({
+      where: { id: problemId },
+      select: { userId: true },
+    });
+    if (completedProblem) {
+      emitToUser(completedProblem.userId, "explanation:completed", { problemId });
+    }
+
     console.log(`Explanation completed for problem: ${problemId}`);
   } catch (error) {
     console.error(`Explanation failed for problem ${problemId}:`, error);
@@ -85,6 +94,14 @@ async function processExplanationJob(job: Job<ExplanationJobData>) {
         analysisStatus: AIAnalysisStatus.FAILED,
       },
     });
+
+    const failedProblem = await prisma.problem.findUnique({
+      where: { id: problemId },
+      select: { userId: true },
+    });
+    if (failedProblem) {
+      emitToUser(failedProblem.userId, "explanation:failed", { problemId });
+    }
 
     throw error;
   }

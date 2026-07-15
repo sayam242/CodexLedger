@@ -1,49 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { fetchDashboardStats } from "../services/problems.api";
 import { type DashboardStats } from "../types/problem.types";
 
 export function useDashboardStats() {
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [isRefetching, setIsRefetching] = useState(false);
+    const hasLoaded = useRef(false);
 
-    const [stats, setStats] =useState<DashboardStats | null>(null);
-
-    const [loading, setLoading] =useState(true);
-
-    useEffect(() => {
-
-        async function loadStats() {
-
-            try {
-
-                const data =
-                    await fetchDashboardStats();
-
-                setStats(data);
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-            }
-
-            finally {
-
-                setLoading(false);
-
-            }
-
+    const loadStats = useCallback(async () => {
+        if (hasLoaded.current) {
+            setIsRefetching(true);
         }
-
-        loadStats();
-
+        try {
+            const data = await fetchDashboardStats();
+            setStats(data);
+            hasLoaded.current = true;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsInitialLoad(false);
+            setIsRefetching(false);
+        }
     }, []);
 
+    useEffect(() => {
+        loadStats();
+    }, [loadStats]);
+
     return {
-
         stats,
-        loading
-
+        loading: isInitialLoad,
+        isRefetching,
+        refetch: loadStats,
     };
-
 }

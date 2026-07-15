@@ -1,6 +1,7 @@
 import prisma from "../../lib/prisma";
 import { ActiveProblem } from "../types/sync.types";
 import { triggerExplanation } from "../../ai/explanation/service";
+import { emitToUser } from "../../lib/socketManager";
 
 export async function saveProblem(
   problem: ActiveProblem,
@@ -117,6 +118,13 @@ export async function saveProblem(
 );
 
   if (savedProblemId && problem.submission) {
+    emitToUser(userId, "problem:synced", {
+      problemId: savedProblemId,
+      slug: problem.meta.slug,
+      title: problem.meta.problemTitle,
+    });
+    emitToUser(userId, "dashboard:updated");
+
     const existingExplanation = await prisma.problemExplanation.findUnique({
       where: { problemId: savedProblemId },
     });

@@ -1,24 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { fetchDashboardActivity } from "../services/dashboard.api";
 import type { DashboardActivityResponse } from "../types/dashboard.types";
 
 export function useDashboardActivity() {
     const [activity, setActivity] = useState<DashboardActivityResponse | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [isRefetching, setIsRefetching] = useState(false);
+    const hasLoaded = useRef(false);
 
-    useEffect(() => {
-        async function loadActivity() {
-            try {
-                const data = await fetchDashboardActivity();
-                setActivity(data);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
-            }
+    const loadActivity = useCallback(async () => {
+        if (hasLoaded.current) {
+            setIsRefetching(true);
         }
-        loadActivity();
+        try {
+            const data = await fetchDashboardActivity();
+            setActivity(data);
+            hasLoaded.current = true;
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsInitialLoad(false);
+            setIsRefetching(false);
+        }
     }, []);
 
-    return { activity, loading };
+    useEffect(() => {
+        loadActivity();
+    }, [loadActivity]);
+
+    return { activity, loading: isInitialLoad, isRefetching, refetch: loadActivity };
 }

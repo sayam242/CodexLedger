@@ -7,6 +7,7 @@ import type {Problem, Submission, NoteResponse, ProblemExplanation, AIAnalysisSt
 import SubmissionTimeline from "../submission/SubmissionTimeline";
 import NotesEditor from "@/detailedProblem/notes/components/NotesEditor";
 import ExplanationContent from "../explanation/ExplanationContent";
+import TutorChat from "@/detailedProblem/tutor/components/TutorChat";
 
 interface ProblemDescriptionProps {
   problem: Problem;
@@ -303,12 +304,9 @@ export default function ProblemDescription({
 
             activeTab === "chatBot" && (
 
-              <PlaceholderContent
-
-                message="
-                  ChatBot not available
-                "
-
+              <TutorChat
+                problemId={problem.id}
+                submissionId={selectedSubmissionId}
               />
 
             )

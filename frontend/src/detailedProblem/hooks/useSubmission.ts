@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { fetchSubmissionDetail } from "../services/detailedProblem.api";
 
@@ -11,10 +12,12 @@ export function useSubmission(
   submissions: Submission[] = []
 ) {
 
+  const [searchParams] = useSearchParams();
+
   const [
     selectedSubmissionId,
     setSelectedSubmissionId
-  ] = useState("");
+  ] = useState(searchParams.get("submission") || "");
 
   const [
     selectedSubmission,
@@ -26,14 +29,6 @@ export function useSubmission(
     if (
       submissions.length === 0
     ) {
-
-      setSelectedSubmission(
-        null
-      );
-
-      setSelectedSubmissionId(
-        ""
-      );
 
       return;
 

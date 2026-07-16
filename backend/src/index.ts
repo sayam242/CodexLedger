@@ -15,7 +15,9 @@ import notesRoutes from "./notes/routes/notes.routes";
 import problemRoutes from "./problems/routes/problem.route";
 import aiRoutes from "./ai/complexity/complexity.routes";
 import explanationRoutes from "./ai/explanation/explanation.routes";
+import tutorRoutes from "./ai/tutor/tutor.routes";
 import { startExplanationWorker } from "./ai/explanation/worker";
+import { initTutorSocket } from "./ai/tutor/tutor.socket";
 import cookieParser from "cookie-parser";
 import { initSocketManager } from "./lib/socketManager";
 
@@ -54,10 +56,13 @@ app.use("/api/problems", notesRoutes);
 app.use("/api/problems", problemRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/ai", explanationRoutes);
+app.use("/api/ai", tutorRoutes);
 
 // Create HTTP server and initialize Socket.IO
 const httpServer = http.createServer(app);
 initSocketManager(httpServer);
+
+initTutorSocket();
 
 startExplanationWorker();
 

@@ -1,5 +1,4 @@
 import { useRef, useEffect } from "react";
-import { Trash2 } from "lucide-react";
 import { useTutorChat } from "../hooks/useTutorChat";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
@@ -35,14 +34,12 @@ function EmptyState() {
 }
 
 export default function TutorChat({
-  problemId,
   submissionId,
 }: TutorChatProps) {
   const {
     messages,
     isStreaming,
     sendMessage,
-    clearChat,
   } = useTutorChat(submissionId);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);

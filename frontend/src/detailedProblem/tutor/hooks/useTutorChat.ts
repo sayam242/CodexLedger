@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { getSocket } from "@/lib/socket";
-import { fetchTutorHistory, clearTutorHistory } from "../services/tutor.api";
+import {  clearTutorHistory } from "../services/tutor.api";
 import type { ChatMessage, ConversationState } from "../types/tutor.types";
 
 const STORAGE_PREFIX = "codexledger_tutor_";

@@ -43,23 +43,7 @@ const TAB_OPTIONS = [
   }
 ] as const;
 
-function PlaceholderContent({
-  message
-}: {
-  message: string;
-}) {
-  return (
-    <p
-      className="
-        text-sm
-        text-gray-500
-        italic
-      "
-    >
-      {message}
-    </p>
-  );
-}
+
 
 export default function ProblemDescription({
   problem,

@@ -15,6 +15,11 @@ export function initSocketManager(httpServer: HttpServer) {
       ],
       credentials: true,
     },
+    pingInterval: 25000, 
+    pingTimeout: 20000,   
+    connectionStateRecovery: {
+      maxDisconnectionDuration: 2000,
+    },
   });
 
   io.use(async (socket: Socket, next) => {

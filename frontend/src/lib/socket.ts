@@ -14,6 +14,7 @@ export function connectSocket(): Socket {
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
+    transports: ["websocket", "polling"],
   });
 
   return socket;

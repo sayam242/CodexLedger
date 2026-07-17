@@ -34,7 +34,7 @@ export default function ChatMessage({ message }: { message: ChatMessageType }) {
         {isUser ? (
           <span className="whitespace-pre-wrap">{message.content}</span>
         ) : (
-          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-code:text-foreground prose-code:before:content-none prose-code:after:content-none">
+          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-code:before:content-none prose-code:after:content-none">
             <Markdown>{message.content}</Markdown>
             {message.isStreaming && <StreamingCursor />}
           </div>

@@ -1,7 +1,6 @@
 import { MentorChatMessage } from "./types";
 
 const MAX_HISTORY = 12;
-const SUMMARY_THRESHOLD = 10;
 
 const chatStore = new Map<string, MentorChatMessage[]>();
 const summaryStore = new Map<string, string>();

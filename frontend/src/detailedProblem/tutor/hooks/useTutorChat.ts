@@ -170,10 +170,25 @@ export function useTutorChat(
     socket.on("tutor:done", onDone);
     socket.on("tutor:error", onError);
 
+    const onDisconnect = () => {
+      const id = streamingIdRef.current;
+      if (id) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === id ? { ...m, isStreaming: false } : m
+          )
+        );
+        streamingIdRef.current = null;
+        setIsStreaming(false);
+      }
+    };
+    socket.on("disconnect", onDisconnect);
+
     return () => {
       socket.off("tutor:chunk", onChunk);
       socket.off("tutor:done", onDone);
       socket.off("tutor:error", onError);
+      socket.off("disconnect", onDisconnect);
     };
   }, []);
 

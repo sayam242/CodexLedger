@@ -45,16 +45,23 @@ async function streamResponse(
     messages,
     stream: true,
     temperature: 0.3,
-    max_tokens: 1024,
+    max_tokens: 10000,
   });
 
   let fullResponse = "";
+  let truncated = false;
   for await (const chunk of stream) {
     const token = chunk.choices[0]?.delta?.content;
     if (token) {
       fullResponse += token;
       socket.emit("tutor:chunk", { chunk: token });
     }
+    if (chunk.choices[0]?.finish_reason === "length") {
+      truncated = true;
+    }
+  }
+  if (truncated) {
+    fullResponse += "\n\n[Response was truncated due to length limit]";
   }
   return fullResponse;
 }
@@ -101,6 +108,13 @@ export async function handleTutorChat(
     );
 
     const fullResponse = await streamResponse(messages, socket);
+
+    if (!fullResponse.trim()) {
+      socket.emit("tutor:error", {
+        message: "The AI returned an empty response. Please try again.",
+      });
+      return;
+    }
 
     const { cleanMessage, state } = parseConversationState(fullResponse);
 

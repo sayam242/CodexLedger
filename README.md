@@ -34,6 +34,13 @@ CodexLedger keeps what works about that workflow and fixes what doesn't. The ext
 
 ---
 
+
+# Link to CodexLedger
+https://codex-ledger-seven.vercel.app/
+
+---
+
+
 # Features
 
 **Automatic Tracking** — A Chrome extension watches leetcode.com and sends the problem, your code, verdict, language, and topics to CodexLedger the moment you submit. Nothing to copy-paste, nothing to log by hand. *(Extension source isn't published in this repo yet.)*
@@ -221,6 +228,8 @@ npm run dev
 - [ ] Mobile app
 
 ---
+
+
 
 # Contributing
 

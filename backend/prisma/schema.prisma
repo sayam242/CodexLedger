@@ -8,37 +8,34 @@ datasource db {
 }
 
 model User {
-  id        String    @id
-  name      String
-  email     String    @unique
-  photoUrl  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  problems  Problem[]
-  
+  id          String       @id
+  name        String
+  email       String       @unique
+  photoUrl    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  submissions Submission[]
+  notes       ProblemNote[]
 }
 
 model Problem {
-  id            String          @id @default(uuid())
+  id            String              @id @default(uuid())
   platform      String
   problemNumber String?
   title         String
   slug          String
   url           String
   difficulty    String
-  solved        Boolean         @default(false)
   explanation   ProblemExplanation?
-  userId        String
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   content       ProblemContent?
   topics        ProblemTopic[]
   submissions   Submission[]
-  note          ProblemNote?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  notes         ProblemNote[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
-  @@unique([userId, problemNumber])
-  @@index([userId])
+  @@unique([problemNumber])
+  @@unique([title])
 }
 
 model ProblemContent {
@@ -63,6 +60,7 @@ model Submission {
   id                           String   @id @default(uuid())
 
   problemId                    String
+  userId                       String
   language                     String
   code                         String
 
@@ -98,12 +96,14 @@ model Submission {
   // -----------------------------
 
   problem                       Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user                          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt                     DateTime @default(now())
   updatedAt                     DateTime @updatedAt
 
-  @@unique([problemId, submittedAt])
+  @@unique([problemId, userId, submittedAt])
   @@index([problemId])
+  @@index([userId])
   @@index([complexityAnalysisStatus])
 }
 
@@ -128,14 +128,17 @@ model ProblemTopic {
 model ProblemNote {
   id         String   @id @default(cuid())
 
-  problemId  String   @unique
-
+  problemId  String
+  userId     String
   content    String   
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   problem     Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([problemId, userId])
 }
 
 

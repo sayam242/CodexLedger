@@ -13,33 +13,71 @@ export async function saveProblem(
 
   await prisma.$transaction(async(tx)=>{
 
-      
-    const savedProblem = await tx.problem.upsert({
-  
-      where:{
-        userId_slug:{
+    let savedProblem;
+
+    if (problem.meta.problemNumber) {
+      savedProblem = await tx.problem.upsert({
+
+        where:{
+          userId_problemNumber:{
+            userId: userId,
+            problemNumber: problem.meta.problemNumber
+          }
+        },
+        update:{
+          difficulty: problem.meta.difficulty,
+          title: problem.meta.problemTitle,
+          url: problem.meta.problemUrl,
+          slug: problem.meta.slug,
+          solved:problem.submission?.status=="Accepted" ? true : false,
+        },
+        create:{
           userId: userId,
-          slug: problem.meta.slug
+          platform: problem.meta.platform,
+          problemNumber: problem.meta.problemNumber,
+          title: problem.meta.problemTitle,
+          slug: problem.meta.slug,
+          url: problem.meta.problemUrl,
+          difficulty: problem.meta.difficulty
         }
-      },
-      update:{
-        difficulty: problem.meta.difficulty,
-        title: problem.meta.problemTitle,
-        url: problem.meta.problemUrl,
-        problemNumber: problem.meta.problemNumber,
-        solved:problem.submission?.status=="Accepted" ? true : false,
-      },
-      create:{
-        userId: userId,
-        platform: problem.meta.platform,
-        problemNumber: problem.meta.problemNumber,
-        title: problem.meta.problemTitle,
-        slug: problem.meta.slug,
-        url: problem.meta.problemUrl,
-        difficulty: problem.meta.difficulty
+
+      });
+    } else {
+      const existingByTitle = await tx.problem.findFirst({
+        where: {
+          userId,
+          title: {
+            equals: problem.meta.problemTitle,
+            mode: "insensitive"
+          }
+        }
+      });
+
+      if (existingByTitle) {
+        savedProblem = await tx.problem.update({
+          where: { id: existingByTitle.id },
+          data: {
+            difficulty: problem.meta.difficulty,
+            url: problem.meta.problemUrl,
+            slug: problem.meta.slug,
+            solved: problem.submission?.status === "Accepted" ? true : false,
+          }
+        });
+      } else {
+        savedProblem = await tx.problem.create({
+          data:{
+            userId: userId,
+            platform: problem.meta.platform,
+            problemNumber: problem.meta.problemNumber,
+            title: problem.meta.problemTitle,
+            slug: problem.meta.slug,
+            url: problem.meta.problemUrl,
+            difficulty: problem.meta.difficulty
+          }
+        });
       }
-  
-    });
+    }
+
     savedProblemId = savedProblem.id;
   
     await tx.problemContent.upsert({

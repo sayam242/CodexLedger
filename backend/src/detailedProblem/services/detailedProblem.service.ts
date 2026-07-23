@@ -5,7 +5,7 @@ import { ProblemDetailResponseDto, SubmissionDetailDto } from "../dto/detailedPr
  * Fetch problem details with paginated submissions
  * 
  * @param problemId - The ID of the problem to fetch
- * @param userId - The ID of the user (for authorization)
+ * @param userId - The ID of the user (for authorization via submissions)
  * @param cursor - Optional cursor for pagination (submissionId or timestamp)
  * @param limit - Number of submissions to fetch (default: 20, max: 100)
  * @returns Problem with paginated submissions and metadata
@@ -19,12 +19,9 @@ export async function getProblemDetailService(
   // Validate limit
   const finalLimit = Math.min(Math.max(limit, 1), 100);
 
-  // Fetch problem with authorization check
-  const problem = await prisma.problem.findFirst({
-    where: {
-      id: problemId,
-      userId // Ensure user owns this problem
-    },
+  // Fetch shared problem (no userId on Problem anymore)
+  const problem = await prisma.problem.findUnique({
+    where: { id: problemId },
     include: {
       content: true,
       topics: {
@@ -36,18 +33,32 @@ export async function getProblemDetailService(
   });
 
   if (!problem) {
+    throw new Error('Problem not found');
+  }
+
+  // Auth check: verify user has at least one submission for this problem
+  const userSubmissionExists = await prisma.submission.findFirst({
+    where: {
+      problemId,
+      userId
+    },
+    select: { id: true }
+  });
+
+  if (!userSubmissionExists) {
     throw new Error('Problem not found or unauthorized');
   }
 
-  // Build submission query
+  // Build submission query - only user's submissions
   const submissionQuery: any = {
     where: {
-      problemId
+      problemId,
+      userId
     },
     orderBy: {
       submittedAt: 'desc' as const
     },
-    take: finalLimit + 1 // Fetch one extra to determine hasMore
+    take: finalLimit + 1
   };
 
   // Apply cursor if provided (for pagination)
@@ -64,9 +75,9 @@ export async function getProblemDetailService(
   const hasMore = submissions.length > finalLimit;
   const paginatedSubmissions = submissions.slice(0, finalLimit);
 
-  // Count total submissions
+  // Count total submissions (user's only)
   const totalCount = await prisma.submission.count({
-    where: { problemId }
+    where: { problemId, userId }
   });
 
   // Format response
@@ -95,7 +106,7 @@ export async function getProblemDetailService(
 
 /**
  * Fetch a specific submission with full code
- * Validates submission belongs to the specific problem
+ * Validates submission belongs to the specific problem and user
  * 
  * @param submissionId - The ID of the submission to fetch
  * @param problemId - The ID of the problem (must match submission's problemId)
@@ -107,14 +118,12 @@ export async function getSubmissionDetailService(
   problemId: string,
   userId: string
 ): Promise<SubmissionDetailDto> {
-  // Fetch submission with problem ownership and problem ID validation
+  // Fetch submission with userId check directly
   const submission = await prisma.submission.findFirst({
     where: {
       id: submissionId,
-      problemId: problemId, // Validate submission belongs to this problem
-      problem: {
-        userId // Ensure user owns the problem
-      }
+      problemId: problemId,
+      userId
     },
     include: {
       problem: true
@@ -146,25 +155,22 @@ export async function getSubmissionDetailService(
 }
 
 /**
- * Count submissions for a problem
+ * Count submissions for a problem (user's submissions only)
  */
 export async function getSubmissionCountService(
   problemId: string,
   userId: string
 ): Promise<number> {
-  // Verify user owns the problem
-  const problem = await prisma.problem.findFirst({
-    where: {
-      id: problemId,
-      userId
-    }
+  // Verify problem exists
+  const problem = await prisma.problem.findUnique({
+    where: { id: problemId }
   });
 
   if (!problem) {
-    throw new Error('Problem not found or unauthorized');
+    throw new Error('Problem not found');
   }
 
   return prisma.submission.count({
-    where: { problemId }
+    where: { problemId, userId }
   });
 }

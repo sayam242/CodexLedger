@@ -21,7 +21,7 @@ function extractJSON(text: string): unknown | null {
 }
 
 async function processExplanationJob(job: Job<ExplanationJobData>) {
-  const { problemId } = job.data;
+  const { problemId, userId } = job.data;
 
   console.log(`Processing explanation job for problem: ${problemId}`);
 
@@ -76,13 +76,7 @@ async function processExplanationJob(job: Job<ExplanationJobData>) {
       },
     });
 
-    const completedProblem = await prisma.problem.findUnique({
-      where: { id: problemId },
-      select: { userId: true },
-    });
-    if (completedProblem) {
-      emitToUser(completedProblem.userId, "explanation:completed", { problemId });
-    }
+    emitToUser(userId, "explanation:completed", { problemId });
 
     console.log(`Explanation completed for problem: ${problemId}`);
   } catch (error) {
@@ -95,13 +89,7 @@ async function processExplanationJob(job: Job<ExplanationJobData>) {
       },
     });
 
-    const failedProblem = await prisma.problem.findUnique({
-      where: { id: problemId },
-      select: { userId: true },
-    });
-    if (failedProblem) {
-      emitToUser(failedProblem.userId, "explanation:failed", { problemId });
-    }
+    emitToUser(userId, "explanation:failed", { problemId });
 
     throw error;
   }

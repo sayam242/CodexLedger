@@ -229,3 +229,33 @@
   outline: none;
 }
 
+/* Problem description — dark code blocks and inline code */
+.problem-content pre {
+  /* background-color: #1e293b; */
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.problem-content pre strong {
+  color: inherit;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+
+.problem-content code {
+  color: #1e293b;
+  padding: 0.15rem 0.3rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+}
+
+.problem-content code::before,
+.problem-content code::after {
+  content: none !important;
+}
+

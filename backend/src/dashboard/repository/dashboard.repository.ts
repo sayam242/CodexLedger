@@ -3,7 +3,7 @@ import prisma from "../../lib/prisma";
 export async function findSubmissionsByUser(userId: string) {
     return prisma.submission.findMany({
         where: {
-            problem: { userId }
+            userId
         },
         select: {
             problemId: true,
@@ -14,12 +14,24 @@ export async function findSubmissionsByUser(userId: string) {
 }
 
 export async function countSolvedProblemsByDifficulty(userId: string) {
-    const solvedProblems = await prisma.problem.findMany({
+    // Get distinct problemIds where user has an Accepted submission
+    const acceptedProblemIds = await prisma.submission.findMany({
         where: {
             userId,
-            submissions: {
-                some: { status: "Accepted" }
-            }
+            status: "Accepted"
+        },
+        distinct: ["problemId"],
+        select: {
+            problemId: true
+        }
+    });
+
+    if (acceptedProblemIds.length === 0) return [];
+
+    // Fetch those problems to get difficulty
+    const problems = await prisma.problem.findMany({
+        where: {
+            id: { in: acceptedProblemIds.map(p => p.problemId) }
         },
         select: {
             difficulty: true
@@ -27,7 +39,7 @@ export async function countSolvedProblemsByDifficulty(userId: string) {
     });
 
     const countMap = new Map<string, number>();
-    for (const p of solvedProblems) {
+    for (const p of problems) {
         countMap.set(p.difficulty, (countMap.get(p.difficulty) || 0) + 1);
     }
 
@@ -38,42 +50,64 @@ export async function countSolvedProblemsByDifficulty(userId: string) {
 }
 
 export async function countSolvedProblems(userId: string) {
-    return prisma.problem.count({
+    const result = await prisma.submission.findMany({
         where: {
             userId,
-            submissions: {
-                some: { status: "Accepted" }
-            }
+            status: "Accepted"
+        },
+        distinct: ["problemId"],
+        select: {
+            problemId: true
         }
     });
+    return result.length;
 }
 
 export async function countTotalProblems(userId: string) {
-    return prisma.problem.count({ where: { userId } });
+    const result = await prisma.submission.findMany({
+        where: { userId },
+        distinct: ["problemId"],
+        select: {
+            problemId: true
+        }
+    });
+    return result.length;
 }
 
 export async function countTotalSubmissions(userId: string) {
     return prisma.submission.count({
-        where: { problem: { userId } }
+        where: { userId }
     });
 }
 
 export async function countAcceptedSubmissions(userId: string) {
     return prisma.submission.count({
         where: {
-            problem: { userId },
+            userId,
             status: 'Accepted'
         }
     });
 }
 
 export async function countSolvedProblemsByTopic(userId: string) {
-    const problemsWithTopics = await prisma.problem.findMany({
+    // Get distinct problemIds where user has an Accepted submission
+    const acceptedProblemIds = await prisma.submission.findMany({
         where: {
             userId,
-            submissions: {
-                some: { status: "Accepted" }
-            }
+            status: "Accepted"
+        },
+        distinct: ["problemId"],
+        select: {
+            problemId: true
+        }
+    });
+
+    if (acceptedProblemIds.length === 0) return [];
+
+    // Fetch those problems with their topics
+    const problemsWithTopics = await prisma.problem.findMany({
+        where: {
+            id: { in: acceptedProblemIds.map(p => p.problemId) }
         },
         include: {
             topics: {
@@ -109,15 +143,28 @@ export async function countSolvedProblemsByTopic(userId: string) {
 }
 
 export async function findRecentSolvedProblems(userId: string, limit: number) {
-    return prisma.problem.findMany({
+    // Get distinct problemIds where user has an Accepted submission
+    const acceptedProblemIds = await prisma.submission.findMany({
         where: {
             userId,
-            submissions: {
-                some: { status: "Accepted" }
-            }
+            status: "Accepted"
+        },
+        distinct: ["problemId"],
+        select: {
+            problemId: true
+        }
+    });
+
+    if (acceptedProblemIds.length === 0) return [];
+
+    // Fetch those problems with their submissions and topics
+    return prisma.problem.findMany({
+        where: {
+            id: { in: acceptedProblemIds.map(p => p.problemId) }
         },
         include: {
             submissions: {
+                where: { userId },
                 orderBy: { submittedAt: 'desc' },
                 take: 1,
                 select: {
@@ -140,15 +187,25 @@ export async function findRecentSolvedProblems(userId: string, limit: number) {
 }
 
 export async function findStrugglingProblems(userId: string, limit: number) {
+    // Get distinct problemIds where user has any submission
+    const userProblemIds = await prisma.submission.findMany({
+        where: { userId },
+        distinct: ["problemId"],
+        select: {
+            problemId: true
+        }
+    });
+
+    if (userProblemIds.length === 0) return [];
+
+    // Fetch those problems with ALL their submissions (for acceptance rate calc)
     const problems = await prisma.problem.findMany({
         where: {
-            userId,
-            submissions: {
-                some: {}
-            }
+            id: { in: userProblemIds.map(p => p.problemId) }
         },
         include: {
             submissions: {
+                where: { userId },
                 select: {
                     status: true
                 }
@@ -190,7 +247,7 @@ export async function findStrugglingProblems(userId: string, limit: number) {
 export async function countCurrentStreak(userId: string): Promise<number> {
     const submissions = await prisma.submission.findMany({
         where: {
-            problem: { userId }
+            userId
         },
         orderBy: { submittedAt: 'desc' }
     });
@@ -199,17 +256,17 @@ export async function countCurrentStreak(userId: string): Promise<number> {
 
     let streak = 0;
     let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // Normalize to midnight
+    currentDate.setHours(0, 0, 0, 0);
 
     for (const submission of submissions) {
         const submissionDate = new Date(submission.submittedAt);
-        submissionDate.setHours(0, 0, 0, 0); // Normalize to midnight
+        submissionDate.setHours(0, 0, 0, 0);
 
         if (submissionDate.getTime() === currentDate.getTime()) {
             streak++;
-            currentDate.setDate(currentDate.getDate() - 1); // Move to previous day
+            currentDate.setDate(currentDate.getDate() - 1);
         } else if (submissionDate.getTime() < currentDate.getTime()) {
-            break; // Streak is broken
+            break;
         }
     }
 

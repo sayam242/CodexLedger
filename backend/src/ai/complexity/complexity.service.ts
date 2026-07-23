@@ -98,13 +98,13 @@ async function runAIAnalysis(submissionId: string) {
       },
     });
 
-    emitToUser(submission.problem.userId, "complexity:completed", { submissionId });
+    emitToUser(submission.userId, "complexity:completed", { submissionId });
   } catch (error) {
     console.error("AI Analysis failed:", error);
     try {
       const failedSubmission = await prisma.submission.findUnique({
         where: { id: submissionId },
-        select: { problem: { select: { userId: true } } },
+        select: { userId: true },
       });
 
       await prisma.submission.update({
@@ -113,7 +113,7 @@ async function runAIAnalysis(submissionId: string) {
       });
 
       if (failedSubmission) {
-        emitToUser(failedSubmission.problem.userId, "complexity:failed", { submissionId });
+        emitToUser(failedSubmission.userId, "complexity:failed", { submissionId });
       }
     } catch (updateError) {
       console.error("CRITICAL: Failed to set FAILED status:", updateError);
@@ -128,7 +128,7 @@ export async function getComplexityAnalysisService(
   const submission = await prisma.submission.findFirst({
     where: {
       id: submissionId,
-      problem: { userId },
+      userId,
     },
     include: {
       problem: {
@@ -188,7 +188,7 @@ export async function markQuizCompletedService(
   const submission = await prisma.submission.findFirst({
     where: {
       id: submissionId,
-      problem: { userId },
+      userId,
     },
   });
 

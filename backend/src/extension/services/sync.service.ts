@@ -8,44 +8,47 @@ export async function saveProblem(
   userId: string
 ) {
 
-  const isSolved =problem.submission?.status === "Accepted";
   let savedProblemId: string = "";
 
   await prisma.$transaction(async(tx)=>{
 
     let savedProblem;
 
+    // Find or create shared problem (no userId on Problem)
     if (problem.meta.problemNumber) {
-      savedProblem = await tx.problem.upsert({
-
-        where:{
-          userId_problemNumber:{
-            userId: userId,
-            problemNumber: problem.meta.problemNumber
-          }
-        },
-        update:{
-          difficulty: problem.meta.difficulty,
-          title: problem.meta.problemTitle,
-          url: problem.meta.problemUrl,
-          slug: problem.meta.slug,
-          solved:problem.submission?.status=="Accepted" ? true : false,
-        },
-        create:{
-          userId: userId,
-          platform: problem.meta.platform,
-          problemNumber: problem.meta.problemNumber,
-          title: problem.meta.problemTitle,
-          slug: problem.meta.slug,
-          url: problem.meta.problemUrl,
-          difficulty: problem.meta.difficulty
-        }
-
+      // Try finding by problemNumber first
+      savedProblem = await tx.problem.findUnique({
+        where: { problemNumber: problem.meta.problemNumber }
       });
+
+      if (savedProblem) {
+        // Update existing shared problem
+        savedProblem = await tx.problem.update({
+          where: { id: savedProblem.id },
+          data: {
+            difficulty: problem.meta.difficulty,
+            title: problem.meta.problemTitle,
+            url: problem.meta.problemUrl,
+            slug: problem.meta.slug,
+          }
+        });
+      } else {
+        // Create new shared problem
+        savedProblem = await tx.problem.create({
+          data: {
+            platform: problem.meta.platform,
+            problemNumber: problem.meta.problemNumber,
+            title: problem.meta.problemTitle,
+            slug: problem.meta.slug,
+            url: problem.meta.problemUrl,
+            difficulty: problem.meta.difficulty
+          }
+        });
+      }
     } else {
-      const existingByTitle = await tx.problem.findFirst({
+      // No problemNumber — try finding by title (case-insensitive)
+      savedProblem = await tx.problem.findFirst({
         where: {
-          userId,
           title: {
             equals: problem.meta.problemTitle,
             mode: "insensitive"
@@ -53,20 +56,18 @@ export async function saveProblem(
         }
       });
 
-      if (existingByTitle) {
+      if (savedProblem) {
         savedProblem = await tx.problem.update({
-          where: { id: existingByTitle.id },
+          where: { id: savedProblem.id },
           data: {
             difficulty: problem.meta.difficulty,
             url: problem.meta.problemUrl,
             slug: problem.meta.slug,
-            solved: problem.submission?.status === "Accepted" ? true : false,
           }
         });
       } else {
         savedProblem = await tx.problem.create({
-          data:{
-            userId: userId,
+          data: {
             platform: problem.meta.platform,
             problemNumber: problem.meta.problemNumber,
             title: problem.meta.problemTitle,
@@ -80,6 +81,7 @@ export async function saveProblem(
 
     savedProblemId = savedProblem.id;
   
+    // Upsert ProblemContent (shared, no userId)
     await tx.problemContent.upsert({
       where:{
         problemId: savedProblem.id
@@ -95,6 +97,7 @@ export async function saveProblem(
       }
     });
   
+    // Upsert topics (shared, no userId)
     for (const topic of problem.topics) {
       const savedTopic = await tx.topic.upsert({
   
@@ -129,11 +132,13 @@ export async function saveProblem(
       });
     }
     
+    // Create submission with userId
     if (problem.submission) {
       await tx.submission.upsert({
         where: {
-          problemId_submittedAt: {
+          problemId_userId_submittedAt: {
             problemId: savedProblem.id,
+            userId: userId,
             submittedAt: new Date(problem.submission.submittedAt)
           }
         },
@@ -142,6 +147,7 @@ export async function saveProblem(
   
         create: {
           problemId: savedProblem.id,
+          userId: userId,
           language: problem.submission.language,
           code: problem.submission.code,
           status: problem.submission.status,
@@ -163,6 +169,7 @@ export async function saveProblem(
     });
     emitToUser(userId, "dashboard:updated");
 
+    // Check if explanation exists for this shared problem
     const existingExplanation = await prisma.problemExplanation.findUnique({
       where: { problemId: savedProblemId },
     });
@@ -173,10 +180,9 @@ export async function saveProblem(
       });
 
       if (submissionCount === 1) {
-        triggerExplanation(savedProblemId).catch(console.error);
+        triggerExplanation(savedProblemId, userId).catch(console.error);
       }
     }
   }
 
 }
-

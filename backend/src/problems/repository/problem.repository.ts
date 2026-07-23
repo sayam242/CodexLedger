@@ -6,12 +6,14 @@ import prisma from "../../lib/prisma";
  * Fetch problems.
  */
 export async function findProblems(
-  args: Prisma.ProblemFindManyArgs
+  args: Prisma.ProblemFindManyArgs,
+  userId?: string
 ) {
   return prisma.problem.findMany({
     ...args,
     include: {
       submissions: {
+        where: userId ? { userId } : undefined,
         orderBy: { submittedAt: "desc" }
       }
     }

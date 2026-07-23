@@ -61,6 +61,10 @@ export default function ProblemDescription({
     setActiveTab
   ] = useState("description");
 
+  function processHtmlContent(html: string): string {
+    return html.replace(/`([^`]+)`/g, "<code>$1</code>");
+  }
+
   return (
 
     <div
@@ -177,12 +181,13 @@ export default function ProblemDescription({
                       overflow-x-hidden
                       **:max-w-full
                       text-gray-700
+                      problem-content
                     "
 
                     dangerouslySetInnerHTML={{
 
                       __html:
-                        problem.htmlContent
+                        processHtmlContent(problem.htmlContent)
 
                     }}
 

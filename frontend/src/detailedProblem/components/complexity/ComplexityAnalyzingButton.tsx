@@ -15,7 +15,7 @@ export default function ComplexityAnalyzingButton({
       size="sm"
       onClick={onClick}
       disabled={isLoading}
-      className="h-6 px-2 text-xs font-medium"
+      className="h-6 px-2 text-xs font-medium cursor-pointer"
     >
       {isLoading ? (
         <span className="flex items-center gap-1">

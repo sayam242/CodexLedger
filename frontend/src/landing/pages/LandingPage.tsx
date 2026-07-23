@@ -98,13 +98,13 @@ export default function LandingPage() {
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => navigate("/login")}
-                            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                         >
                             Login
                         </button>
                         <button
                             onClick={() => navigate("/login")}
-                            className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                            className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer"
                         >
                             Get Started
                         </button>
@@ -145,7 +145,7 @@ export default function LandingPage() {
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
                             <button
                                 onClick={() => navigate("/login")}
-                                className="group bg-black text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-800 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
+                                className="group bg-black text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-800 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer"
                             >
                                 <Download className="h-5 w-5" />
                                 Download Extension
@@ -153,7 +153,7 @@ export default function LandingPage() {
                             </button>
                             <button
                                 onClick={() => navigate("/login")}
-                                className="px-8 py-4 rounded-xl text-lg font-semibold border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all flex items-center gap-2"
+                                className="px-8 py-4 rounded-xl text-lg font-semibold border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all flex items-center gap-2 cursor-pointer"
                             >
                                 See How It Works
                                 <ArrowRight className="h-5 w-5" />

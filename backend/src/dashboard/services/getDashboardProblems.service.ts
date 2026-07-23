@@ -8,15 +8,15 @@ export async function getDashboardProblems(
     await prisma.problem.findMany({
 
         where: {
-
-            userId
-
+            submissions: {
+                some: { userId }
+            }
         },
 
         include: {
 
             submissions: {
-
+                where: { userId },
                 orderBy: {
 
                     submittedAt: "desc"

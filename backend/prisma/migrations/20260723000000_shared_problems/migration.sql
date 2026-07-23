@@ -234,6 +234,34 @@ END $$;
 ALTER TABLE "Submission" DROP CONSTRAINT IF EXISTS "ProblemId_submittedAt_key";
 ALTER TABLE "ProblemNote" DROP CONSTRAINT IF EXISTS "ProblemNote_problemId_key";
 
+-- Add new composite unique constraints required by Prisma
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'Problem_problemNumber_key'
+  ) THEN
+    ALTER TABLE "Problem" ADD CONSTRAINT "Problem_problemNumber_key" UNIQUE ("problemNumber");
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'Problem_title_key'
+  ) THEN
+    ALTER TABLE "Problem" ADD CONSTRAINT "Problem_title_key" UNIQUE ("title");
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'Submission_problemId_userId_submittedAt_key'
+  ) THEN
+    ALTER TABLE "Submission" ADD CONSTRAINT "Submission_problemId_userId_submittedAt_key" UNIQUE ("problemId", "userId", "submittedAt");
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'ProblemNote_problemId_userId_key'
+  ) THEN
+    ALTER TABLE "ProblemNote" ADD CONSTRAINT "ProblemNote_problemId_userId_key" UNIQUE ("problemId", "userId");
+  END IF;
+END $$;
+
 -- ============================================================
 -- STEP 11: Add foreign key constraints (skip if exists)
 -- ============================================================

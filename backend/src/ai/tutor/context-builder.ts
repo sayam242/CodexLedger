@@ -20,7 +20,7 @@ export async function buildMentorContext(
   const submission = await prisma.submission.findFirst({
     where: {
       id: submissionId,
-      problem: { userId },
+      userId,
     },
     include: {
       problem: {
@@ -50,7 +50,7 @@ export async function buildMentorContext(
     description: extractStatement(plainText),
     examples: extractExamples(plainText),
     constraints: extractConstraints(plainText),
-    tags: problem.topics.map((pt) => pt.topic.name),
+    tags: problem.topics.map((pt: { topic: { name: string } }) => pt.topic.name),
   };
 
   const submissionCtx: MentorSubmissionContext = {

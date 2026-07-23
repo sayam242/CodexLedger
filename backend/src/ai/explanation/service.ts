@@ -7,11 +7,9 @@ export async function getExplanationService(
   problemId: string,
   userId: string
 ): Promise<ExplanationResponseDto> {
-  const problem = await prisma.problem.findFirst({
-    where: {
-      id: problemId,
-      userId,
-    },
+  // Problem is shared — just verify it exists
+  const problem = await prisma.problem.findUnique({
+    where: { id: problemId },
   });
 
   if (!problem) {
@@ -32,6 +30,19 @@ export async function getExplanationService(
     };
   }
 
+  // Auto-retry FAILED explanations: delete and re-queue
+  if (explanation.analysisStatus === AIAnalysisStatus.FAILED) {
+    await prisma.problemExplanation.delete({ where: { problemId } });
+    await triggerExplanation(problemId, userId);
+    return {
+      problemId,
+      explanation: null,
+      analysisStatus: "PENDING",
+      version: null,
+      generatedAt: null,
+    };
+  }
+
   return {
     problemId,
     explanation: explanation.explanation as unknown as ProblemExplanation,
@@ -41,7 +52,7 @@ export async function getExplanationService(
   };
 }
 
-export async function triggerExplanation(problemId: string): Promise<void> {
+export async function triggerExplanation(problemId: string, userId?: string): Promise<void> {
   const existing = await prisma.problemExplanation.findUnique({
     where: { problemId },
   });
@@ -58,7 +69,7 @@ export async function triggerExplanation(problemId: string): Promise<void> {
     },
   });
 
-  await explanationQueue.add("generate-explanation", { problemId }, {
+  await explanationQueue.add("generate-explanation", { problemId, userId }, {
     jobId: problemId,
   });
 

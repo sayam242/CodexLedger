@@ -34,8 +34,6 @@ interface BackendProblem {
     title: string;
     slug: string;
     difficulty: string;
-    solved: boolean;
-    userId: string;
     createdAt: string;
     updatedAt: string;
     submissions: Array<{
@@ -74,7 +72,7 @@ function mapToCardData(p: BackendProblem): ProblemCardData {
         difficulty: p.difficulty,
         latestStatus: submissions.length > 0
             ? submissions[0].status
-            : p.solved ? "Accepted" : "Unsolved",
+            : "Unknown",
         latestSubmissionAt: submissions.length > 0
             ? submissions[0].submittedAt
             : p.updatedAt,

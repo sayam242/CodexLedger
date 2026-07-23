@@ -46,6 +46,7 @@ export interface ProblemExplanation {
 
 export interface ExplanationJobData {
   problemId: string;
+  userId: string;
 }
 
 export interface ExplanationContext {

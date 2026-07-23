@@ -12,21 +12,20 @@ export async function getNoteService(
   userId: string
 ): Promise<NoteResponse> {
 
-  const problem = await prisma.problem.findFirst({
-    where: {
-      id: problemId,
-      userId,
-    },
+  // Verify problem exists (shared, no userId check)
+  const problem = await prisma.problem.findUnique({
+    where: { id: problemId },
   });
 
   if (!problem) {
     throw new Error("Problem not found");
   }
 
-  const note = await prisma.problemNote.findUnique({
+  // Find note for this user + problem
+  const note = await prisma.problemNote.findFirst({
     where: {
       problemId,
-
+      userId,
     },
   });
 
@@ -54,11 +53,9 @@ export async function saveNoteService(
   content: string
 ): Promise<void> {
 
-  const problem = await prisma.problem.findFirst({
-    where: {
-      id: problemId,
-      userId,
-    },
+  // Verify problem exists (shared, no userId check)
+  const problem = await prisma.problem.findUnique({
+    where: { id: problemId },
   });
 
   if (!problem) {
@@ -67,7 +64,10 @@ export async function saveNoteService(
 
   await prisma.problemNote.upsert({
     where: {
-      problemId,
+      problemId_userId: {
+        problemId,
+        userId,
+      },
     },
 
     update: {
@@ -76,6 +76,7 @@ export async function saveNoteService(
 
     create: {
       problemId,
+      userId,
       content,
     },
   });

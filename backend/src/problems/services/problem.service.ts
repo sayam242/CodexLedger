@@ -35,7 +35,7 @@ export async function getProblemsService(
     filters
   );
 
-  const [problems, total] = await Promise.all([
+    const [problems, total] = await Promise.all([
 
     findProblems({
 
@@ -47,7 +47,7 @@ export async function getProblemsService(
 
       take: limit,
 
-    }),
+    }, userId),
 
     countProblems(where),
 

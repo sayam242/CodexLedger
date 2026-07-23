@@ -89,9 +89,9 @@ export default function LandingPage() {
     return (
         <div className="min-h-screen bg-background">
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-background/100 backdrop-blur-lg border-b border-border">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xl font-bold">
+                    <div className="flex items-center gap-2 text-xl font-bold cursor-pointer" onClick={() => navigate("/")}>
                         <Code className="bg-black text-white px-1 rounded" size={32} />
                         <span>CodexLedger</span>
                     </div>
@@ -144,20 +144,14 @@ export default function LandingPage() {
                         {/* CTA Buttons */}
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
                             <button
-                                onClick={() => navigate("/login")}
+                                onClick={() => window.open("https://microsoftedge.microsoft.com/addons/detail/codexledger/gkenpcmnoanajgdaieijnkimjdjomibe", "_blank")}
                                 className="group bg-black text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-800 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer"
                             >
                                 <Download className="h-5 w-5" />
                                 Download Extension
                                 <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <button
-                                onClick={() => navigate("/login")}
-                                className="px-8 py-4 rounded-xl text-lg font-semibold border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all flex items-center gap-2 cursor-pointer"
-                            >
-                                See How It Works
-                                <ArrowRight className="h-5 w-5" />
-                            </button>
+
                         </div>
 
                         {/* Motivational Quote */}
@@ -173,7 +167,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Stats Section */}
+            {/* Stats Section
             <section className="py-16 px-6 bg-gray-50 dark:bg-gray-900/50">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -185,7 +179,7 @@ export default function LandingPage() {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* Features Section */}
             <section className="py-20 px-6">
@@ -306,8 +300,8 @@ export default function LandingPage() {
                         and improving their problem-solving skills.
                     </p>
                     <button
-                        onClick={() => navigate("/login")}
-                        className="group bg-white text-gray-900 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-all inline-flex items-center gap-2 shadow-lg"
+                        onClick={() => window.open("https://microsoftedge.microsoft.com/addons/detail/codexledger/gkenpcmnoanajgdaieijnkimjdjomibe", "_blank")}
+                        className="group bg-white text-gray-900 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-gray-100 transition-all inline-flex items-center gap-2 shadow-lg cursor-pointer"
                     >
                         <Download className="h-5 w-5" />
                         Download Free Extension

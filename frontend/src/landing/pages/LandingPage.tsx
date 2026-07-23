@@ -9,8 +9,6 @@ import {
     TrendingUp,
     Download,
     ChevronRight,
-
-    ArrowRight,
     Sparkles,
     Brain,
     Trophy
@@ -66,12 +64,12 @@ const FEATURES = [
     }
 ];
 
-const STATS = [
-    { value: "10K+", label: "Problems Tracked" },
-    { value: "500+", label: "Active Coders" },
-    { value: "50K+", label: "Submissions Logged" },
-    { value: "98%", label: "Love Rate" },
-];
+// const STATS = [
+//     { value: "10K+", label: "Problems Tracked" },
+//     { value: "500+", label: "Active Coders" },
+//     { value: "50K+", label: "Submissions Logged" },
+//     { value: "98%", label: "Love Rate" },
+// ];
 
 export default function LandingPage() {
     const navigate = useNavigate();

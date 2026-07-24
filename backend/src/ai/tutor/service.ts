@@ -45,7 +45,6 @@ async function streamResponse(
     messages,
     stream: true,
     temperature: 0.3,
-    max_tokens: 10000,
   });
 
   let fullResponse = "";
